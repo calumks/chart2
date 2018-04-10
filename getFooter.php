@@ -2,7 +2,7 @@
 
 function getFooter(){
 
-$form = "<p>Any bugs, please let us know at a rehearsal, or create an issue at  <a href='https://github.com/owen-kellie-smith/chart'>Github</a>.</p>";
+$form = "<p>Any bugs, please let us know at a rehearsal, or create an issue at  <a href='https://github.com/owen-kellie-smith/chart2'>Github</a>.</p>";
 $form .= "<p><a href='.?action=logout'>Logout</a></p>";
 $form .= "<div>
             <strong>Other links</strong>
