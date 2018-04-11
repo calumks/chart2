@@ -12,7 +12,7 @@ if (mysqli_connect_errno()) {
 $form = "<form action = '' method='GET'>";
 $form .= "<input type='hidden' name='action' value='getChart' />";
 
-$sql = "SELECT DISTINCT V.arrangementID, CONCAT(V.songName,', ',A.arrangerFirstName, ' ',A.arrangerLastName) FROM view_efilePart AS V, view_arrangement AS A WHERE A.arrangementID=V.arrangementID ORDER BY V.songName ASC";
+$sql = "SELECT DISTINCT V.arrangementID, CONCAT(V.songName,', ',A.arrangerFirstName, ' ',A.arrangerLastName), V.songName FROM view_efilePart AS V, view_arrangement AS A WHERE A.arrangementID=V.arrangementID ORDER BY V.songName ASC";
 //echo $sql;
 $result = mysqli_query($link, $sql);
 if ($result){
