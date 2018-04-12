@@ -28,7 +28,7 @@ To get going on linux, assuming your github project is in ~/chart2 ...
     mysql -u root -p   (then enter root password)
         source ~/chart2/sql/chartBlank.sql # where chartBlank.sql is tableview specifications for blank database called chart2;
 	GRANT ALL PRIVILEGES ON *.* TO 'makeUpAUserName'@'localhost' IDENTIFIED BY 'makeUpASatisfactoryPassword';
-    # edit mysql-cred.php to change $user to makeUpAUserName, $password to makeUpASatisfactoryPassword, $database to chart2
+    # edit mysql-cred.php to change $username to makeUpAUserName, $password to makeUpASatisfactoryPassword, $database to chart2
  
     # install php and restart apache
     sudo apt-get install php libapache2-mod-php php-mcrypt php-mysql
