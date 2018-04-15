@@ -8,6 +8,7 @@
         processIsolation="false"
         stopOnFailure="false"
         syntaxCheck="true"
+	bootstrap="include_refsB.php"
 >
         <testsuites>
                 <testsuite name="MyPlugin Test Suite">
