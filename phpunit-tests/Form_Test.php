@@ -39,7 +39,7 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_FormWithDatabaseLength8(){
-    $this->assertTrue( strlen( getPartForm(1) ) >= 0 );
+//    $this->assertTrue( strlen( getPartForm(1) ) >= 0 ); /// DEPENDS on FPDF
   }
 
   public function test_FormWithDatabaseLength9(){
