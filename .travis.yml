@@ -1,2 +1,7 @@
 language: php
 sudo: false
+services:
+  - mysql
+before_install:
+  - mysql -e 'CREATE DATABASE chart2;'
+  - mysql -u root --default-character-set=utf8 chart2 < sql/chartBlank.sql
