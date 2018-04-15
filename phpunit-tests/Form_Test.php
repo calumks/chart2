@@ -13,6 +13,19 @@ class Form_Test extends PHPUnit_Framework_TestCase
   public function test_FormWithDatabaseLength(){
     $this->assertTrue( strlen( getCopySetForm() ) >= 0  );
     $this->assertTrue( strlen( getDeleteSetForm() ) >= 0 );
+    $this->assertTrue( strlen( getCopySetForm() ) > 0 );
+    $this->assertTrue( strlen( getDeleteSetForm() ) > 0 );
+    $this->assertTrue( strlen( getEfileForm() ) >= 0 );
+    $this->assertTrue( strlen( getEditNoteForm() ) >= 0 );
+    $this->assertTrue( strlen( getEditSetForm() ) >= 0 );
+    $this->assertTrue( strlen( getGigSetForm( 1 ) ) >= 0 );
+    $this->assertTrue( strlen( getNewNoteForm() ) >= 0 );
+    $this->assertTrue( strlen( getPartForm(1) ) >= 0 );
+    $this->assertTrue( strlen( getPeople() ) >= 0 );
+    $this->assertTrue( strlen( getPublicationForm() ) >= 0 );
+    $this->assertTrue( strlen( getSetPartsForm() ) >= 0 );
+    $this->assertTrue( strlen( getSetPartsOutput( 1, 'dummy') ) >= 0 );
+    $this->assertTrue( strlen( getSongs() ) >= 0 );
   }
 
   public function test_indexFormLength(){
@@ -28,21 +41,6 @@ class Form_Test extends PHPUnit_Framework_TestCase
 // FPDF
     $this->assertTrue( strlen( getRequestForm() ) > 10 );
 
-// mysqli
-    $this->assertTrue( strlen( getCopySetForm() ) > 10 );
-    $this->assertTrue( strlen( getDeleteSetForm() ) > 10 );
-    $this->assertTrue( strlen( getEfileForm() ) > 10 );
-    $this->assertTrue( strlen( getEditNoteForm() ) > 10 );
-    $this->assertTrue( strlen( getEditSetForm() ) > 10 );
-    $this->assertTrue( strlen( getGigSetForm( 1 ) ) > 10 );
-    $this->assertTrue( strlen( getNewNoteForm() ) > 10 );
-    $this->assertTrue( strlen( getPartForm(1) ) > 10 );
-    $this->assertTrue( strlen( getPeople() ) > 10 );
-    $this->assertTrue( strlen( getPublicationForm() ) > 10 );
-    $this->assertTrue( strlen( getSetPartsForm() ) > 10 );
-    $this->assertTrue( strlen( getSetPartsOutput( 1, 'dummy') ) > 10 );
-    $this->assertTrue( strlen( getSongs() ) > 10 );
-*/
   }  
 
 
