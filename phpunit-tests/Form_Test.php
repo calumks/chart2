@@ -47,7 +47,7 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_FormWithDatabaseLength10(){
-    $this->assertTrue( strlen( getPublicationForm() ) >= 0 );
+    $this->assertTrue( strlen( getPublicationForm( 'pdf' ) ) >= 0 );
   }
 
   public function test_FormWithDatabaseLength11(){

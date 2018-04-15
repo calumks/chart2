@@ -115,13 +115,13 @@ mysqli_close( $link );
  
 }
 
-function getPublicationForm(){
+function getPublicationForm( $path = '../pdf'){
     
     $return = "<fieldset><legend>Pair pdf to publication</legend><form action='' method='POST'>";
     $return .= "<input type='hidden' name='action' value='setPublication'>";
     $return .= "<p>Efile <select name='efile'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (listPdfUnlisted() as $key=>$filename){
+    foreach (listPdfUnlisted( $path ) as $key=>$filename){
         $return .= "<option value='" . $filename . "'>" . $filename . "</option>";
     }
     $return .= "</select>";
@@ -160,9 +160,9 @@ function getPublicationForm(){
     return $return;
 }
 
-function listPdfUnlisted(){
+function listPdfUnlisted( $path ='../pdf' ){
 
-$path    = '../pdf';
+//$path    = '../pdf';
 $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
