@@ -3,4 +3,4 @@ sudo: false
 services:
   - mysql
 before_install:
-  - mysql -u root --default-character-set=utf8 chart2 < sql/chartBlank.sql
+  - mysql -u root --default-character-set=utf8 < sql/chartBlank.sql
