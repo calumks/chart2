@@ -10,6 +10,9 @@ class Form_Test extends PHPUnit_Framework_TestCase
   public function tearDown(){
 	}
   
+  public function test_FormWithDatabaseLength(){
+    $this->assertTrue( strlen( getCopySetForm() ) > 10 );
+  }
 
   public function test_indexFormLength(){
     $this->assertTrue( strlen( getEmailForm() ) > 10 );
@@ -19,13 +22,13 @@ class Form_Test extends PHPUnit_Framework_TestCase
     $this->assertTrue( strlen( getNewUserForm() ) > 10 );
     $this->assertTrue( strlen( getNewSongForm() ) > 10 );
     $this->assertTrue( strlen( getUploadFileForm() ) > 10 );
-    $this->assertTrue( strlen( getCopySetForm() ) > 10 );
 /*
     fails due to dependency
 // FPDF
     $this->assertTrue( strlen( getRequestForm() ) > 10 );
 
 // mysqli
+    $this->assertTrue( strlen( getCopySetForm() ) > 10 );
     $this->assertTrue( strlen( getDeleteSetForm() ) > 10 );
     $this->assertTrue( strlen( getEfileForm() ) > 10 );
     $this->assertTrue( strlen( getEditNoteForm() ) > 10 );
