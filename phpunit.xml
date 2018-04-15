@@ -8,7 +8,6 @@
         processIsolation="false"
         stopOnFailure="false"
         syntaxCheck="true"
-        bootstrap="phpunit-load-classes.php">
         <testsuites>
                 <testsuite name="MyPlugin Test Suite">
                         <directory>./phpunit-tests/</directory>
