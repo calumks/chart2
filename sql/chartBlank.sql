@@ -24,7 +24,7 @@ USE chart2;
 
 --
 --  Create a user to whom the views (later on) can be attributed
-GRANT ALL PRIVILEGES ON *.* TO 'chartman'@'localhost' IDENTIFIED BY 'SomeSuitablePassword999!';
+GRANT ALL PRIVILEGES ON *.* TO 'chartUser'@'localhost' IDENTIFIED BY 'SomeSuitablePassword999!';
 -- --------------------------------------------------------
 
 --
