@@ -1,5 +1,5 @@
 <?php
     $servername = "localhost";
-    $username = "your_username";
-    $password = "your_pass";
-	$database ="your_database";
+    $username = "chartman";    // change $username for  local installation
+    $password = "SomeSuitablePassword999!";    // change $password for  local installation
+	$database ="chart2";    // change $database for  local installation
