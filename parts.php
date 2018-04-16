@@ -146,6 +146,7 @@ $fname = "";
 function getGigSetForm($gigID){
  
     $lastOrder = -999;
+    $order = 0;
 $gigLabel = "";
     foreach (listMultiple("SELECT G.name, G.gigDate FROM gig as G WHERE  G.gigID = " . $gigID . "")  as $key=>$song){
         $gigLabel = $song[0] . " " . $song[1];
