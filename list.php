@@ -1,5 +1,9 @@
 <?php
 use \setasign\Fpdi;
+
+// setup the autoload function
+require_once('vendor/autoload.php');
+
 define ('SITE_ROOT', realpath(dirname(__FILE__)));
 
 function deleteFile($fileNameExclPath){
