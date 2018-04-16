@@ -13,3 +13,4 @@ before_install:
 before_script: 
   - composer require setasign/fpdf ^1.8
   - composer require setasign/fpdi ^2.0
+  - composer require setasign/fpdi-fpdf
