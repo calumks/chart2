@@ -212,8 +212,8 @@ echo "</fieldset>";
 
 function numpages($filename){
     try {
-//        require_once('fpdf/fpdf.php');
-//        require_once('fpdi2/src/autoload.php');
+        require_once('fpdf/fpdf.php');
+        require_once('fpdi2/src/autoload.php');
         $pdf = new Fpdi\Fpdi();
         $numPages = $pdf->setSourceFile("$filename");
     }
