@@ -15,7 +15,7 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_FormWithDatabaseLength2(){
-    $this->assertTrue( strlen( getCopySetForm() ) > 0 );
+    $this->assertTrue( strlen( getCopySetForm() ) >= 0 );
   }
 
   public function test_FormWithDatabaseLength3(){
