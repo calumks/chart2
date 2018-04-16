@@ -41,7 +41,7 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_FormPartFormNOTRUN(){
-//    $this->assertTrue( strlen( getPartForm(1) ) >= 0 ); /// DEPENDS on FPDF
+    $this->assertTrue( strlen( getPartForm(1) ) >= 0 ); /// DEPENDS on FPDF
   }
 
   public function test_FormPeople(){
@@ -49,7 +49,7 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_FormPublicationFormNOTRUN(){
-//    $this->assertTrue( strlen( getPublicationForm( 'pdf' ) ) >= 0 );   /// DEPENDS ON FPDF
+    $this->assertTrue( strlen( getPublicationForm( 'pdf' ) ) >= 0 );   /// DEPENDS ON FPDF
   }
 
   public function test_FormSetParts(){
