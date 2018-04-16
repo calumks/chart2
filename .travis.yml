@@ -5,4 +5,4 @@ services:
 before_install:
   - mysql -u root --default-character-set=utf8 < sql/chartBlank.sql
 before_script: 
-  - composer require  setasign/fpdi-fpdf
+  - composer require  setasign/fpdi-fpdf ^2.0
