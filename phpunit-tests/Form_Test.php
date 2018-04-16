@@ -10,57 +10,61 @@ class Form_Test extends PHPUnit_Framework_TestCase
   public function tearDown(){
   }
   
-  public function test_FormWithDatabaseLength1(){
+// forms with probably zero length in a blank database
+
+  public function test_FormDeleteSetForm(){
     $this->assertTrue( strlen( getDeleteSetForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength2(){
+  public function test_FormCopySetForm(){
     $this->assertTrue( strlen( getCopySetForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength3(){
+  public function test_FormEfileForm(){
     $this->assertTrue( strlen( getEfileForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength4(){
+  public function test_FormEditNoteForm(){
     $this->assertTrue( strlen( getEditNoteForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength5(){
+  public function test_FormEditSetForm(){
     $this->assertTrue( strlen( getEditSetForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength6(){
+  public function test_FormGigSetForm(){
     $this->assertTrue( strlen( getGigSetForm( 1 ) ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength7(){
+  public function test_FormNewNoteForm(){
     $this->assertTrue( strlen( getNewNoteForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength8(){
+  public function test_FormPartFormNOTRUN(){
 //    $this->assertTrue( strlen( getPartForm(1) ) >= 0 ); /// DEPENDS on FPDF
   }
 
-  public function test_FormWithDatabaseLength9(){
+  public function test_FormPeople(){
     $this->assertTrue( strlen( getPeople() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength10(){
+  public function test_FormPublicationFormNOTRUN(){
 //    $this->assertTrue( strlen( getPublicationForm( 'pdf' ) ) >= 0 );   /// DEPENDS ON FPDF
   }
 
-  public function test_FormWithDatabaseLength11(){
+  public function test_FormSetParts(){
     $this->assertTrue( strlen( getSetPartsForm() ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength12(){
+  public function test_FormSetPartsOutput(){
     $this->assertTrue( strlen( getSetPartsOutput( 1, 'dummy') ) >= 0 );
   }
 
-  public function test_FormWithDatabaseLength13(){
+  public function test_FormGetSongs(){
     $this->assertTrue( strlen( getSongs() ) >= 0 );
   }
+
+// forms with positive length (even in a blank database)
 
   public function test_indexFormLength(){
     $this->assertTrue( strlen( getEmailForm() ) > 10 );
