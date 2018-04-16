@@ -15,4 +15,5 @@ before_script:
   - composer require setasign/fpdi-fpdf
 
 script:
+  - ls 
   - phpunit
