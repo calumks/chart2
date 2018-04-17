@@ -1,4 +1,5 @@
 <?php 
+require_once "vendor/autoload.php";
 // alphabetical order as everything is called via index.php
 include_once "arrangement.php";
 include_once "authenticate.php";
