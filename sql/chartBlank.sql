@@ -25,6 +25,9 @@ USE chart2;
 --
 --  Create a user to whom the views (later on) can be attributed
 GRANT ALL PRIVILEGES ON *.* TO 'chartUser'@'localhost' IDENTIFIED BY 'SomeSuitablePassword999!';
+
+--  Create a user for travis and mysql-cred.php
+GRANT ALL PRIVILEGES ON *.* TO 'makeUpAUserName'@'localhost' IDENTIFIED BY 'makeUpASatisfactoryPassword';
 -- --------------------------------------------------------
 
 --
