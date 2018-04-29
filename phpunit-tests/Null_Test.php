@@ -1,6 +1,6 @@
 <?php
 
-class My_Test extends PHPUnit_Framework_TestCase
+class Null_Test extends PHPUnit_Framework_TestCase
 {
   private $debug = false;
   
