@@ -22,8 +22,8 @@ if ($result){
 	$msg = "To use the TSB chart printer please paste this address into your browser.\n  https://tsbchart.000webhostapp.com/?confirmation=" . $md5now;
 	$msg = wordwrap($msg, 70);
 	
-	$headers = 'From: ' .getOneAdminEmail() . "\r\n" . 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
-//	$headers = 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
+//	$headers = 'From: ' .getOneAdminEmail() . "\r\n" . 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
+	$headers = 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
 //	$headers = 'Bcc: ' .getOneAdminEmail();
 
 //echo $msg . __FILE__;

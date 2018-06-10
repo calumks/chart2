@@ -92,7 +92,6 @@ function getPartForm($efileID){
     $return .= "<fieldset><legend>Delete part/page pairs</legend>";
     $return .= "<div><table>";
     $return .= "<tr><th>Part<th>Start Page<th>End Page<th>Efile</tr>";
-$fname = "";
     foreach (listMultiple("SELECT X.efilePartID, X.startPage, X.endPage, P.name, E.name AS Ename  FROM efilePart as X, part as P, efile as E WHERE  X.partID=P.partID and X.efileID = E.efileID  and E.efileID = " . $efileID . " order by X.startPage  ASC")  as $key=>$song){
         $fname = $song[4];
         $return .= "<tr>";
@@ -146,8 +145,6 @@ $fname = "";
 function getGigSetForm($gigID){
  
     $lastOrder = -999;
-    $order = 0;
-$gigLabel = "";
     foreach (listMultiple("SELECT G.name, G.gigDate FROM gig as G WHERE  G.gigID = " . $gigID . "")  as $key=>$song){
         $gigLabel = $song[0] . " " . $song[1];
     }   

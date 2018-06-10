@@ -23,7 +23,6 @@ function deleteCookie(){
 }
 
 function hasValidCookie(){
-if (ALL_USERS_ARE_ADMINS == 'All') return true;
 $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
@@ -77,7 +76,6 @@ return $breturn;
 }
 
 function hasAdminCookie(){
-if (ALL_USERS_ARE_ADMINS == true) return true;
 $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;

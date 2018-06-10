@@ -87,6 +87,18 @@ if (hasAdminCookie()){
         }
     }
 
+    if ('addToPads'==$_POST['action']){
+        if(isset( $_POST['arrangementID']) ){
+            addToPads( $_POST['arrangementID'], 1 );
+        }
+    }
+
+    if ('removeFromPads'==$_POST['action']){
+        if(isset( $_POST['arrangementID']) ){
+            addToPads( $_POST['arrangementID'], 0 );
+        }
+    }
+
     if(isset( $_POST['action']) && 'deleteSetListPart'==$_POST['action']){
         if(isset( $_POST['setListID'])) {
             deleteSetListPart($_POST['setListID']);

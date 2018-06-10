@@ -10,7 +10,7 @@ function saveRequest(){
 	if (mysqli_connect_errno()) {
     		die("Connection failed: " . mysqli_connect_error);
 	} 
-	$sql = "INSERT INTO request( requestIP, requestWhen, requestGet ) VALUES( '" . $ip . "', '" .$now . "','" . $get . "');";
+	$sql = "INSERT INTO request( requestWhen, requestGet ) VALUES( '" .$now . "','" . $get . "');";
 	$result = mysqli_query($link, $sql);
 
 	if ($result) {

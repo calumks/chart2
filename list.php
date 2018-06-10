@@ -1,9 +1,5 @@
 <?php
 use \setasign\Fpdi;
-
-// setup the autoload function
-require_once('vendor/autoload.php');
-
 define ('SITE_ROOT', realpath(dirname(__FILE__)));
 
 function deleteFile($fileNameExclPath){
@@ -119,13 +115,13 @@ mysqli_close( $link );
  
 }
 
-function getPublicationForm( $path = '../pdf'){
+function getPublicationForm(){
     
     $return = "<fieldset><legend>Pair pdf to publication</legend><form action='' method='POST'>";
     $return .= "<input type='hidden' name='action' value='setPublication'>";
     $return .= "<p>Efile <select name='efile'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (listPdfUnlisted( $path ) as $key=>$filename){
+    foreach (listPdfUnlisted() as $key=>$filename){
         $return .= "<option value='" . $filename . "'>" . $filename . "</option>";
     }
     $return .= "</select>";
@@ -164,9 +160,9 @@ function getPublicationForm( $path = '../pdf'){
     return $return;
 }
 
-function listPdfUnlisted( $path ='../pdf' ){
+function listPdfUnlisted(){
 
-//$path    = '../pdf';
+$path    = '../pdf';
 $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
@@ -216,8 +212,8 @@ echo "</fieldset>";
 
 function numpages($filename){
     try {
-//        require_once('fpdf/fpdf.php');
-//        require_once('fpdi2/src/autoload.php');
+        require_once('fpdf/fpdf.php');
+        require_once('fpdi2/src/autoload.php');
         $pdf = new Fpdi\Fpdi();
         $numPages = $pdf->setSourceFile("$filename");
     }

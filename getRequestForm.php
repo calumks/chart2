@@ -9,7 +9,7 @@ function getRequestForm(){
 	$out .= getForm();
 	$out .= "</fieldset>";
 	include_once "showRequests.php";
-	$out .= "<p>" . countRequests() . "</p>";
+//	$out .= "<p>" . countRequests() . "</p>";
 	$out .= "<p><a href='maintenance/'>Maintenance</a></p>";
 
 	return $out;

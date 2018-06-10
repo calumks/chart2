@@ -14,7 +14,7 @@ function showRequests(){
 		$check .= "<td>"  . $row[0] ;
 		$check .= "<td>"  . $row[1] ;
 		$check .= "<td>"  . $row[2] ;
-		$check .= "<td>"  . $row[3] ;
+//		$check .= "<td>"  . $row[3] ;
 		$check .= "</tr>";
     	}
     }
