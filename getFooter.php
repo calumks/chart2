@@ -3,6 +3,7 @@
 function getFooter(){
 
 $form = "<p>Any bugs, please let Owen know at a rehearsal, or create an issue at  <a href='https://github.com/owen-kellie-smith/chart2'>Github</a>.</p>";
+$form .= "<p><a href='.'>Main menu</a></p>";
 $form .= "<p><a href='.?action=logout'>Logout</a></p>";
 $form .= "<p>If you want to print an A3 landscape pdf onto to 2 A4 portrait pages, here's one way that worked in June 2018. 
 <ol><li>Split the pdf into single pages via <a href='https://www.splitpdf.com'>www.splitpdf.com</a> . Select 'Extract all pages to separate files'.  Splitpdf gives you a zip file which you download and extract on your computer.</li>

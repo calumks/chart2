@@ -40,24 +40,36 @@ if (isset($_REQUEST['confirmation'])) {
 //include_once "include_refsB.php";
 if (hasValidCookie()){
 //    echo "has valid cookie";
+    $arrangementID = -1;
+	if (isset($_GET['arrangementID'])) {
+        $arrangementID = $_GET['arrangementID'];
+    }
 	if (isset($_REQUEST['action'])) {
-		if ( 'getChart'==$_GET['action']) {
+		if ( 'getChartList'==$_GET['action'] ) {
+	        if (isset($_GET['partID'])) {
+			echo getOutputLink( listAll($_GET['partID']) );
+	        }
+			echo getRequestForm($arrangementID);
+			echo getFooter();
+			exit();
+	       
+		} elseif ( 'getChart'==$_GET['action']) {
 			echo getOutputLink( pdfFromGet() );
-			echo getRequestForm();
+			echo getRequestForm($arrangementID);
 			echo getFooter();
 			exit();
 		} elseif ( 'getGig'==$_GET['action']) {
 			echo getOutputLink( pdfFromGig() );
-			echo getRequestForm();
+			echo getRequestForm($arrangementID);
 			echo getFooter();
 			exit();
 		} else {
-			echo getRequestForm();
+			echo getRequestForm($arrangementID);
 			echo getFooter();
 			exit();
 		}
 	} else {
-		echo getRequestForm();
+		echo getRequestForm($arrangementID);
 		echo getFooter();
 			exit();
 	}

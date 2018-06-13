@@ -37,10 +37,11 @@ if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error);
 } 
 if (isset($partName)){
-    $sqlCharts = "SELECT DISTINCTROW S.name as songName, g.name, g.gigDate, c.countParts, v.arrangementID, 1+X.countPages " . $distinctOrder . " FROM (setList2 as v INNER JOIN arrangement AS A on v.arrangementID=A.arrangementID INNER JOIN song as S on S.songID = A.songID INNER JOIN gig as g ON g.gigID = v.gigID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePartSetList2 WHERE  partName='" . $partName . "' GROUP BY arrangementID) as c on c.arrangementID = v.arrangementID   LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g WHERE partName='Alto Sax 1') AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID WHERE ( 0 " . $where . " ) " . $orderByList . ";";
+    $sqlCharts = "SELECT DISTINCTROW S.name as songName, g.name, g.gigDate, c.countParts, v.arrangementID, XXX.countPages " . $distinctOrder . " FROM (setList2 as v INNER JOIN arrangement AS A on v.arrangementID=A.arrangementID INNER JOIN song as S on S.songID = A.songID INNER JOIN gig as g ON g.gigID = v.gigID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePartSetList2 WHERE  partName='" . $partName . "' GROUP BY arrangementID) as c on c.arrangementID = v.arrangementID   LEFT JOIN (SELECT SUM(countPages) as countPages, arrangementID FROM (SELECT 1 + endPage-startPage as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g WHERE partName='" . $partName . "') AS PP ) AS X GROUP BY arrangementID) AS XXX ON XXX.arrangementID = A.arrangementID WHERE ( 0 " . $where . " ) " . $orderByList . ";";
 } else {
     $sqlCharts = "SELECT 1 from dual where false;";
 }
+///echo $sqlCharts;
 $result = mysqli_query($link, $sqlCharts);
 $pageCount=1;
 if ($result){

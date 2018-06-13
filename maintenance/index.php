@@ -173,7 +173,11 @@ echo "<p><a href='./?action=getNewPersonForm'>Add song/person</a></p>";
 
 if (isset($_GET['action'])){
     if ('getParts'==$_GET['action']){
-        echo getEFileForm();
+        if (isset($_GET['publicationID'])){
+            echo getEFileForm($_GET['publicationID']);
+        } else {
+            echo getEFileForm();
+        }    
     }
 
     if ('getPartsForSet'==$_GET['action']){

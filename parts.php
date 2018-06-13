@@ -65,8 +65,29 @@ mysqli_close( $link );
  
 }
 
+function getEfileFormOrder( $publicationID = -1, $orderby = 'order by E.name  ASC', $label = "alphabetical"){
+    
+    if ( 0 < $publicationID ){
+        $wherePub = " AND E.publicationID =" . $publicationID . " ";
+    } else {
+        $wherePub = " AND 1 ";
+    }
+    $return = "<form action='' method='GET'>";
+    $return .= "<input type='hidden' name='action' value='getEfileParts'>";
+    $return .= "<p>Efile " . $label . "<select name='efileID'>";
+    $return .= "<option value='" . -1 . "'>" . "" . "</option>";
+    foreach (listMultiple("SELECT E.efileID, CONCAT(E.name,': ', S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName), V.countPages, E.name  FROM efile as E, publication as P, arrangement as A, person as PP, song AS S, view_efilePages AS V  WHERE  E.publicationID=P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID and E.efileID=V.efileID " . $wherePub . $orderby )  as $key=>$song){
+        $return .= "<option value='" . $song[0] . "'>" . $song[2] . "/" . numPages('../pdf/' . $song[3]) . " " . $song[1] . "</option>";
+    }
+    $return .= "</select>";
+    $return .= "<p><input type='submit' value='Get parts'>";
+    $return .= "</form>";
 
-function getEfileForm(){
+    return $return;
+}
+
+
+function getEfileFormOld(){
     
     $return = "<form action='' method='GET'>";
     $return .= "<input type='hidden' name='action' value='getEfileParts'>";
@@ -80,6 +101,16 @@ function getEfileForm(){
     $return .= "</form>";
 
     return $return;
+}
+
+function getEfileForm( $publicationID = -1){
+    
+    $return =  getEfileFormOrder( $publicationID );
+
+    $return .= getEfileFormOrder( $publicationID, ' order by E.efileID DESC ', ' date');
+    $return .= getPubForm();
+    return $return;
+    
 }
 
 function getPartForm($efileID){
@@ -111,6 +142,7 @@ function getPartForm($efileID){
     $return .= "</table></div>";
     $return .= "</fieldset>";
     $return .= "<fieldset><legend>Add part/page pair</legend>";
+    $return .= "<p><a href='../pdf/" . $fname . "'>" . $fname . "</a></p>";
     $numpages = numPages('../pdf/' . $fname);
 //    echo $numpages;
     $return .= "<div>";
@@ -200,4 +232,21 @@ function getGigSetForm($gigID){
     $return .= "</table></div>";
     $return .= "</fieldset>";
     return $return;
+}
+
+function getPubForm(){
+    $return = "";
+    $return .= "<fieldset><legend>Limit pdfs to publication</legend>";
+    $return .= "<form action='' method='GET'>";
+    $return .= "<input type='hidden' name='action' value='getParts'>";
+    $return .= "<p>Publication <select name='publicationID'>";
+    $return .= "<option value='" . -1 . "'>" . "" . "</option>";
+    foreach (listMultiple("SELECT P.publicationID, CONCAT(S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName) FROM publication as P, arrangement as A, person as PP, song AS S WHERE  P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID order by S.name  ASC")  as $key=>$song){
+        $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
+    }
+    $return .= "</select>";
+    $return .= "<input type='submit' value='Limit pdfs on offer'>";
+    $return .= "</form>";
+    $return .= "</p>";
+return $return;
 }
