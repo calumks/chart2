@@ -40,7 +40,7 @@ $form = "<fieldset><legend>" . $songName . "</legend>\n" . $form . "</fieldset>\
 return $form;
 }
 
-function getForm(){
+function getForm( $gigID ){
 
 include "mysql-cred.php";
 
@@ -49,8 +49,9 @@ if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 } 
 //$form = "<form action = 'allChart.php' method='GET'>";
-$form = "<form action = '' method='GET'>";
-$form .= "<input type='hidden' name='action' value='getChart' />";
+$form = "";
+//$form = "<form action = '' method='GET'>";
+//$form .= "<input type='hidden' name='action' value='getChart' />";
 
 $sql = "SELECT DISTINCT V.arrangementID, CONCAT(XYZ.partLabel, ' ', IF(AA.isInPads=1,'','*')), CONCAT(V.songName,', ',A.arrangerFirstName, ' ',A.arrangerLastName) FROM view_efilePart AS V, view_arrangement AS A, arrangement AS AA, (SELECT XX.arrangementID, CONCAT('S',XX.count4, ' T',XX.count1,' B', XX.count2, ' R', XX.count5, ' V', XX.count6, ' C', XX.count9) as partLabel FROM
 (SELECT 
@@ -69,7 +70,7 @@ if ($result){
 //		$check = "<p><input type='checkbox' name='arrangement[]' value='" . $row[0] . "'>" . $i++ . ". " . $row[1] . " " . getPartLabel( $row[0] );
 		$check = "<p>";
 //		$check .= "<input type='checkbox' name='arrangement[]' value='" . $row[0] . "'>";
-		$check .= $i++ . ". " . $row[1] . "<a href='.?arrangementID=" . $row[0] . "'>".$row[2] . "</a>" . " ";
+		$check .= $i++ . ". " . $row[1] . "<a href='.?arrangementID=" . $row[0] . "&gigID=". $gigID . "'>".$row[2] . "</a>" . " ";
 		$form = $form . $check;
     	}
 }

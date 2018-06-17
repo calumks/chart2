@@ -1,6 +1,15 @@
+<?php
+// https://stackoverflow.com/questions/1907653/how-to-force-page-not-to-be-cached-in-php
+header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP/1.1
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+header("Pragma: no-cache"); // HTTP/1.0
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+?>
 <?php 
 $bShowEmailForm = true;
 include_once "include_refsB.php";
+//echo getLatestGigID();
 if (isset($_REQUEST['confirmation'])) {
 	setValidCookie( $_REQUEST['confirmation'] );
 	header('Location: https://tsbchart.000webhostapp.com');
@@ -40,36 +49,39 @@ if (isset($_REQUEST['confirmation'])) {
 //include_once "include_refsB.php";
 if (hasValidCookie()){
 //    echo "has valid cookie";
-    $arrangementID = -1;
+    $arrangementID = -1; $gigID = -1;
 	if (isset($_GET['arrangementID'])) {
         $arrangementID = $_GET['arrangementID'];
+    }
+	if (isset($_GET['gigID'])) {
+        $gigID = $_GET['gigID'];
     }
 	if (isset($_REQUEST['action'])) {
 		if ( 'getChartList'==$_GET['action'] ) {
 	        if (isset($_GET['partID'])) {
 			echo getOutputLink( listAll($_GET['partID']) );
 	        }
-			echo getRequestForm($arrangementID);
+			echo getRequestForm($arrangementID, $gigID);
 			echo getFooter();
 			exit();
 	       
 		} elseif ( 'getChart'==$_GET['action']) {
 			echo getOutputLink( pdfFromGet() );
-			echo getRequestForm($arrangementID);
+			echo getRequestForm($arrangementID, $gigID);
 			echo getFooter();
 			exit();
 		} elseif ( 'getGig'==$_GET['action']) {
 			echo getOutputLink( pdfFromGig() );
-			echo getRequestForm($arrangementID);
+			echo getRequestForm($arrangementID, $gigID);
 			echo getFooter();
 			exit();
 		} else {
-			echo getRequestForm($arrangementID);
+			echo getRequestForm($arrangementID, $gigID);
 			echo getFooter();
 			exit();
 		}
 	} else {
-		echo getRequestForm($arrangementID);
+			echo getRequestForm($arrangementID, $gigID);
 		echo getFooter();
 			exit();
 	}

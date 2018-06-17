@@ -2,16 +2,21 @@
 use \setasign\Fpdi;
 //function pdfFromGig($dummyGigID, $dummyPart){
 function pdfFromGig($dummyGigID=-1, $dummyPart=-1){
-    
+    $includeMusic = false;
+if (isset($_GET['includeMusic'])){
+    if ( 'include' == $_GET['includeMusic']){
+        $includeMusic = true;
+    } 
+}    
 if (isset($_GET['gigID']) && isset($_GET['part'])){
     deleteOutput( getcwd() );
     include "saveRequest.php";
     saveRequest();    
-    return pdfFromGigExplicit($_GET['gigID'], $_GET['part'], getcwd());
+    return pdfFromGigExplicit($_GET['gigID'], $_GET['part'], getcwd(), $includeMusic );
 }
 }
 
-function pdfFromGigExplicit($gigID, $partName, $directoryBase, $outputStem=''){
+function pdfFromGigExplicit($gigID, $partName, $directoryBase, $includeMusic = true, $outputStem=''){
 
 //print_r($_GET);
 $where="";
@@ -71,6 +76,7 @@ if ($result){
 	}
 }
 //echo "<pre>" . __FILE__ . print_r($arrange,1) . "</pre>";
+if ($includeMusic){
 require_once('getAllNotes.php');
 getAllNotes($pdf, $arrange);
 
@@ -92,6 +98,9 @@ if ($result){
 		// use the imported page and place it at point 10,10 with a width of 200 mm
 	}
     }
+}
+} else { // end if ($includeMusic)
+$pdf->Write(5,"\n(Notes and music excluded)\n");
 }
 mysqli_close( $link );
 $yourFile =  'output/'. $outputStem . md5(time()) . 'myfile.pdf';
