@@ -1,5 +1,7 @@
 <?php 
+require_once "vendor/autoload.php";
 // alphabetical order as everything is called via index.php
+define("ALL_USERS_ARE_ADMINS", "All");
 include_once "arrangement.php";
 include_once "authenticate.php";
 include_once "delete.php";
