@@ -39,26 +39,13 @@ return $breturn;
 }
 
 function getUserFromTsbcode( $tsbcode ){
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
 $sql = "SELECT userid FROM confirmation where tsbcode = '" . $tsbcode ."' LIMIT 1;";
 //echo $sql;
-$result = mysqli_query($link, $sql);
-
-if ($result) {
-    if ($result->num_rows > 0){
-	    $row = mysqli_fetch_row( $result );
-	    return $row[0];
-    } else {
-	    return -1;
-    }
-} else {
-	return -1;
-}
-mysqli_close( $link );
+$ret = -1; // if nothing found
+foreach( listMultiple( $sql ) AS $index=>$row ){
+	$ret = $row[0];
+    } 
+return $ret;
 }
 
 function hasCookieForEmail( $email ){
