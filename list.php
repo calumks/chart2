@@ -73,12 +73,6 @@ if ($_FILES['myUpload']['error'] == UPLOAD_ERR_OK) {
 
 function setPublication(){
     
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
   if (isset($_POST['efile']) && isset($_POST['formatID']) && strlen($_POST['efile'])>4 ){
         
     if (isset($_POST['publicationID']) && $_POST['publicationID'] > 0){
@@ -88,16 +82,13 @@ if (mysqli_connect_errno()) {
     } elseif (isset($_POST['description']) && strlen($_POST['description']) > 0 && isset($_POST['songID']) && isset($_POST['arrangerPersonID'])  && $_POST['songID']>0 && $_POST['arrangerPersonID']>0 ){
         $sql = "INSERT INTO arrangement (songID, arrangerPersonID) VALUES(". $_POST['songID'] . ",". $_POST['arrangerPersonID'] . ");";
 //        echo $sql;
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
-        $last_id = mysqli_insert_id($link);
+        $last_id = my_insert_id($sql);
         $sql = "INSERT INTO publication (arrangementID, description) VALUES(". $last_id . ",'". $_POST['description'] . "');";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
-        $last_id = mysqli_insert_id($link);
+        $last_id = my_insert_id($sql);
         $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $_POST['efile'] . "',1,". $_POST['formatID'] . "," . $last_id . ");";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
+        $result = my_execute( $sql);
     }
   }
-mysqli_close( $link );
  
 }
 
@@ -146,22 +137,13 @@ function listPdfUnlisted( $path = '../pdf' ){
 $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
 $sql = "SELECT name from efile";
 //echo $sql;
 $pairedFiles = array();
-$result = mysqli_query($link, $sql);
-if ($result){
-    	while($row = mysqli_fetch_row( $result )) {
+    	foreach( listMultiple( $sql ) AS $index=>$row ){
     	$pairedFiles[] = $row[0];
     	}
-}
 
-mysqli_close( $link );
 
 $unpaired = array_diff($files, $pairedFiles);
 $unpaired2 = array();
@@ -205,7 +187,6 @@ function getPublicationList(){
 
 $sql = "SELECT E.name, S.name, P.description, PP.firstName, PP.lastName FROM efile as E, publication as P, arrangement as A, person as PP, song AS S WHERE E.publicationID = P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID ORDER BY E.name";
 //echo $sql;
-$result = mysqli_query($link, $sql);
 $details = array();
     	foreach(listMultiple( $sql ) AS $index=>$row ){
     	    $details[] = $row;
@@ -218,7 +199,6 @@ function arrangement( $filename ){
 
 $sql = "SELECT E.name, P.description, PP.firstName, PP.lastName FROM efile as E, publication as P, arrangement as A, person as PP WHERE E.publicationID = P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND E.name = '" . $filename . "'";
 //echo $sql;
-$result = mysqli_query($link, $sql);
 $details = "";
 	$i = 1;
     	foreach(listMultiple( $sql ) AS $index=>$row ){
