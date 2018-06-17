@@ -27,8 +27,8 @@ $sql = "SELECT V.fileName, V.startPage, V.endPage, V.formatID, V.partName, V.son
 //echo "\n\n";
 //echo $sql;
 //echo "\n\n";
-require_once('fpdf/fpdf.php');
-require_once('fpdi2/src/autoload.php');
+//require_once('fpdf/fpdf.php');
+//require_once('fpdi2/src/autoload.php');
 
 $pdf = new Fpdi\Fpdi();
 

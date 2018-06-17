@@ -1,7 +1,7 @@
 <?php
 
 function listAll( $partID=''){
-require_once('fpdf/fpdf.php');
+//require_once('fpdf/fpdf.php');
 
 /*
 $pdf = new FPDF();
@@ -59,7 +59,7 @@ $orderByList = " ORDER BY v.setListOrder ASC ";
         $orderByFile = " ORDER BY songname ASC";
         $orderByList = " ORDER BY songname ASC";
     $partWhere .= " OR partName='Drums' ";
-require_once('fpdf/fpdf.php');
+//require_once('fpdf/fpdf.php');
 
 $pdf = new myListAllPDF();
 include "mysql-cred.php";

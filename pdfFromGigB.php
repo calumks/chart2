@@ -30,8 +30,8 @@ if (isset($gigID)){
 if (isset($partName)){
     $partWhere .= " OR partName='" . $partName . "' ";
 }
-require_once('fpdf/fpdf.php');
-require_once('fpdi2/src/autoload.php');
+//require_once('fpdf/fpdf.php');
+//require_once('fpdi2/src/autoload.php');
 
 $pdf = new Fpdi\Fpdi();
 include "mysql-cred.php";
