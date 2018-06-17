@@ -8,23 +8,14 @@ define ('SITE_ROOT', realpath(dirname(__FILE__)));
 
 function deleteFile($fileNameExclPath){
 
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
 $sql = "SELECT COUNT(*) from efile where name='" . $fileNameExclPath . "'";
 //echo $sql;
 $bFound = true;
-$result = mysqli_query($link, $sql);
-if ($result){
-    	while($row = mysqli_fetch_row( $result )) {
+foreach( listMultiple($sql) as $index=>$row ){
         		if ( $row[0]==0 ){
         		    $bFound = false;
         		 }
         }
-}
-mysqli_close( $link );
 if( !$bFound){
     unlink(SITE_ROOT . '/pdf/' . $fileNameExclPath);
 }    
@@ -56,21 +47,12 @@ function renameFile($efileID){
     return $newName;
 }
 
-//echo renameFile(14);
 
 function receiveFile(){
     
-//    define ('SITE_ROOT', realpath(dirname(__FILE__)));
-
-//    echo SITE_ROOT;
    $uploads_dir = "pdf";
 // https://secure.php.net/manual/en/function.move-uploaded-file.php'    
 
-//echo "<br>";
-//print_r($_FILES['myUpload']);
-//echo "<br>";
-//print_r($_FILES['myUpload']['error']);
-//echo "<br>";
 
 if ($_FILES['myUpload']['error'] == UPLOAD_ERR_OK) {
     $tmp_name = $_FILES['myUpload']['tmp_name'];
@@ -155,18 +137,12 @@ function getPublicationForm( $path = '../pdf'){
 
     $return .= "<p><input type='submit' value='ADD'>";
     $return .= "</form></fieldset>";
-//    $return .= "<fieldset><legend>Paired pdfs</legend><table>";
-//    foreach (getPublicationList() as $key=>$row){
-//        $return .= "<tr><td><a href='../pdf/" . $row[0] . "'>" . $row[0] . "</a></td><td>" . $row[1] . "</td><td>" . $row[2] . "</td><td>" . $row[3] . "</td><td>" . $row[4] . "</td></tr>";
-//    }
-//    $return .= "</table></fieldset>";
 
     return $return;
 }
 
 function listPdfUnlisted( $path = '../pdf' ){
 
-//$path    = '../pdf';
 $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
@@ -216,8 +192,6 @@ echo "</fieldset>";
 
 function numpages($filename){
     try {
-//        require_once('fpdf/fpdf.php');
-//        require_once('fpdi2/src/autoload.php');
         $pdf = new Fpdi\Fpdi();
         $numPages = $pdf->setSourceFile("$filename");
     }
@@ -229,94 +203,53 @@ function numpages($filename){
 
 function getPublicationList(){
 
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
 $sql = "SELECT E.name, S.name, P.description, PP.firstName, PP.lastName FROM efile as E, publication as P, arrangement as A, person as PP, song AS S WHERE E.publicationID = P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID ORDER BY E.name";
 //echo $sql;
 $result = mysqli_query($link, $sql);
 $details = array();
-if ($result){
-    	while($row = mysqli_fetch_row( $result )) {
+    	foreach(listMultiple( $sql ) AS $index=>$row ){
     	    $details[] = $row;
     	}
-}
-
-mysqli_close( $link );
 return $details;
 }
 
 
 function arrangement( $filename ){
 
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
 $sql = "SELECT E.name, P.description, PP.firstName, PP.lastName FROM efile as E, publication as P, arrangement as A, person as PP WHERE E.publicationID = P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND E.name = '" . $filename . "'";
 //echo $sql;
 $result = mysqli_query($link, $sql);
 $details = "";
-if ($result){
 	$i = 1;
-    	while($row = mysqli_fetch_row( $result )) {
+    	foreach(listMultiple( $sql ) AS $index=>$row ){
     	if (1==$i){
     	    $details .= $row[1];
     	}
     	$details .= ", " . $row[2] . " " . $row[3];
     	$i++;
     	}
-}
-
-mysqli_close( $link );
 return $details;
 }
 
 function countParts( $filename ){
 
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
 $sql = "SELECT COUNT(*) FROM (SELECT DISTINCT partName FROM view_efilePart AS V INNER JOIN efile AS E on E.efileID = V.efileID where E.name = '" . $filename . "') AS C";
 
 //echo $sql;
-$result = mysqli_query($link, $sql);
 $details = "";
-if ($result){
-    	while($row = mysqli_fetch_row( $result )) {
+    	foreach( listMultiple( $sql ) AS $index=>$row){
     	$details = $row[0];
     	}
-}
-
-mysqli_close( $link );
 return $details;
 }
 
 
 function listSingle($sql){
 
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
-$result = mysqli_query($link, $sql);
 $pairedFiles = array();
-if ($result){
-    	while($row = mysqli_fetch_row( $result )) {
+    	foreach(listMultiple( $sql ) AS $index=>$row ){
     	$pairedFiles[] = $row[0];
     	}
-}
-mysqli_close( $link );
 return $pairedFiles;
 }
 
