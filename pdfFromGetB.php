@@ -3,17 +3,17 @@ use \setasign\Fpdi;
 function pdfFromGet(){
 
 //print_r($_GET);
-$where=" OR efileID=-999 ";
-$partWhere=" OR partID=-999 ";
-$arrangeWhere=" OR efileID in (SELECT efileID from efile where publicationID in (SELECT publicationID from publication WHERE arrangementID IN (-999";
+$where=" OR V.efileID=-999 ";
+$partWhere=" OR V.partID=-999 ";
+$arrangeWhere=" OR V.efileID in (SELECT efileID from efile where publicationID in (SELECT publicationID from publication WHERE arrangementID IN (-999";
 if (isset($_GET['chart'])){
    foreach ($_GET['chart'] AS $index=>$value){
-      $where .= " OR efileID='" . $value . "' ";
+      $where .= " OR V.efileID='" . $value . "' ";
    }
 }
 if (isset($_GET['part'])){
     foreach ($_GET['part'] AS $index=>$value){
-      $partWhere .= " OR partID='" . $value . "' ";
+      $partWhere .= " OR P.partID='" . $value . "' ";
     }
 }
 if (isset($_GET['arrangement'])){
@@ -23,12 +23,12 @@ if (isset($_GET['arrangement'])){
 }
 $arrangeWhere .=")))";
 $where .=   $arrangeWhere;
-$sql = "SELECT fileName, startPage, endPage, formatID, partName, songName FROM view_efilePart where 1 AND ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) ORDER BY partName ASC, fileName ASC";
+$sql = "SELECT V.fileName, V.startPage, V.endPage, V.formatID, V.partName, V.songName FROM view_efilePart AS V INNER JOIN part as P on P.partID = V.partID INNER JOIN section AS S on P.minSectionID = S.sectionID where 1 AND ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) ORDER BY V.songName, S.printOrder ASC, P.partID ASC";
 //echo "\n\n";
 //echo $sql;
 //echo "\n\n";
-require_once('fpdf/fpdf.php');
-require_once('fpdi2/src/autoload.php');
+//require_once('fpdf/fpdf.php');
+//require_once('fpdi2/src/autoload.php');
 
 $pdf = new Fpdi\Fpdi();
 

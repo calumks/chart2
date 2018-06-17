@@ -19,11 +19,11 @@ $sql = "INSERT into confirmation (userID, confirmationCode, ip) VALUES( " . $use
 //echo $sql . __FILE__;
 $result = mysqli_query($link, $sql);
 if ($result){
-	$msg = "To use the TSB chart printer please paste this address into your browser.\n  https://tsbchart.000webhostapp.com/?confirmation=" . $md5now;
+	$msg = "To use the TSB chart printer please paste this address into your browser.\n  http://tsbchart.000webhostapp.com/?confirmation=" . $md5now;
 	$msg = wordwrap($msg, 70);
 	
-	$headers = 'From: ' .getOneAdminEmail() . "\r\n" . 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
-//	$headers = 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
+//	$headers = 'From: ' .getOneAdminEmail() . "\r\n" . 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
+	$headers = 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
 //	$headers = 'Bcc: ' .getOneAdminEmail();
 
 //echo $msg . __FILE__;

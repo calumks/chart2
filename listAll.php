@@ -1,9 +1,7 @@
 <?php
 
-function listAll(){
-	
-	// setup the autoload function
-require_once('vendor/autoload.php');
+function listAll( $partID=''){
+//require_once('fpdf/fpdf.php');
 
 /*
 $pdf = new FPDF();
@@ -15,7 +13,7 @@ $pdf->Output();
 
 $title = "";
 
-class myPDF extends FPDF
+class myListAllPDF extends FPDF
 {
 var $col = 0;
 
@@ -61,17 +59,82 @@ $orderByList = " ORDER BY v.setListOrder ASC ";
         $orderByFile = " ORDER BY songname ASC";
         $orderByList = " ORDER BY songname ASC";
     $partWhere .= " OR partName='Drums' ";
+//require_once('fpdf/fpdf.php');
 
-$pdf = new myPDF();
+$pdf = new myListAllPDF();
 include "mysql-cred.php";
 
-$arrange = array();
+if ('' == $partID){
+    $partID = 0;
+}
+
+    $partList = array();
+
+if (-999==$partID){
+    $wherePart = " 1 ";   
+    $bIsSection = false;
+} elseif (-123==$partID){
+    $partList = array(6); ///hard-coded Database ID (OK, probably only labels change)
+    $bIsSection = true; 
+} else {
+    $wherePart = " partID = " . $partID;
+    $bIsSection = false;
+}
 $link  = mysqli_connect( $servername, $username, $password, $database);
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error);
 } 
 
-    $sqlCharts = "SELECT DISTINCTROW S.name as songName, 'Thornbury Swing Band', NOW(), c.countParts, A.arrangementID, 1+X.countPages " . $distinctOrder . " FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID  LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g ) AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID  WHERE ( c.countParts > 0   ) " . $orderByList . ";";
+
+//$sqlParts = "SELECT P.partID from part as P WHERE " . $wherePart . " order by P.partID ASC";
+if (!$bIsSection){
+    $sqlParts = "SELECT P.partID, P.name from part as P INNER JOIN section AS S on P.minSectionID = S.sectionID WHERE " . $wherePart . "  order by S.printOrder ASC,  P.partID ASC";
+//echo $sqlParts;
+$arrange = array();
+    $resultP = mysqli_query($link, $sqlParts);
+    $rowCount = 0;
+    if ($resultP){
+    	while($rowP = mysqli_fetch_row( $resultP )) {
+    	    $partList[] =  $rowP[0];
+//    	    echo $rowCount;
+    	    $rowCount++;
+    	}
+    }
+}
+//    $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), S.name) as songName, 'Thornbury Swing Band', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID  LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g ) AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID  WHERE ( c.countParts > 0   ) ORDER BY S.Name ASC;";
+
+//$partID = 13; // Alto Sax 1
+//$partID = 18; // Vocal Solo
+//$partID = 12; // Piano
+//$partID = 19; // Vocal Soprano
+
+foreach ($partList AS $partID){
+$title = "";
+if ($partID > 0){
+    if (!$bIsSection){
+        $sqlCharts = "SELECT shortName, name from part where partid=" . $partID . ";";
+    } else {
+        $sqlCharts = "SELECT shortName, name from section where sectionid=" . $partID . ";";
+    }
+//    echo $sqlCharts;
+    $result = mysqli_query($link, $sqlCharts);
+    if ($result){
+    	while($row = mysqli_fetch_row( $result )) {
+    	    $partShortName =  $row[0];
+    	    $partLongName =  $row[1];
+	    }
+    }
+    if (!$bIsSection){
+        $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), S.name, IF(c2.countParts>0,'',' (No ".$partShortName.")')) as songName, 'Thornbury Swing Band (". $partLongName . ")', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID 
+        LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart WHERE partID = " . $partID . " GROUP BY arrangementID) as c2 on c2.arrangementID = A.arrangementID 
+        LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g ) AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID  WHERE ( c.countParts > 0   ) ORDER BY S.Name ASC;";
+    } else {
+        $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), S.name, IF(c2.countParts>0,'',' (No ".$partShortName.")')) as songName, 'Thornbury Swing Band (". $partLongName . ")', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID 
+        LEFT JOIN (SELECT count(*) as countParts, VVV.arrangementID from  view_efilePart AS VVV INNER JOIN part as PPP on VVV.partID=PPP.partID INNER JOIN section as SSS ON SSS.sectionID = PPP.minSectionID WHERE sectionID = " . $partID . " GROUP BY arrangementID) as c2 on c2.arrangementID = A.arrangementID 
+        LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g ) AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID  WHERE ( c.countParts > 0   ) ORDER BY S.Name ASC;";
+    }
+    
+}
 
  //   echo "\n\n <br><br> sqlCharts"; echo "\n\n <br><br>";echo $sqlCharts; echo "\n\n <br><br>";
 
@@ -140,12 +203,15 @@ $oldTitle = "";
 $result = mysqli_query($link, $sqlCharts);
 if ($result){
     	while($row = mysqli_fetch_row( $result )) {
-    	    if( $oldTitle <> $row[0] . " (" . $row[1] . ")"){
+//    	    if( $oldTitle <> $row[0] . " (" . $row[1] . ")"){
+    	    if( $oldTitle <> $row[0] ){
     	        if( $oldTitle<>""){
     	            $notes .= "\n";
     	        }
-    	        $oldTitle = $row[0] . " (" . $row[1] . ")";
-    	        $notes .= $oldTitle . "\n";
+//    	        $oldTitle = $row[0] . " (" . $row[1] . ")";
+    	        $oldTitle = $row[0] ;
+//    	        $notes .= $oldTitle . "\n";
+    	        $notes .= $oldTitle . ": ";
     	    }
 //            $notes .= $row[3] . " " . $row[2] . "\n";
             $notes .=  $row[2] . "\n"; // no date
@@ -159,13 +225,15 @@ if ($result){
     $pdf->SetFillColor(200,220,255);
     
     $pdf->Cell(0,6,"Notes",0,1,'L',true);
-    $pdf->Ln(4);
+    $pdf->Ln();
     // Save ordinate
     $pdf->y0 = $pdf->GetY();
     
 	$pdf->MultiCell(90,5,$notes);
-    $pdf->Ln(4);
+    $pdf->SetCol(0);
+//    $pdf->Ln();
 
+} // foreach ($partList AS $partID){
 
 //echo "<pre>" . __FILE__ . print_r($yourFile,1) . "</pre>";
 $yourFile =  'output/'. md5(time()) . 'index.pdf';

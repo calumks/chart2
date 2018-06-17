@@ -87,6 +87,18 @@ if (hasAdminCookie()){
         }
     }
 
+    if ('addToPads'==$_POST['action']){
+        if(isset( $_POST['arrangementID']) ){
+            addToPads( $_POST['arrangementID'], 1 );
+        }
+    }
+
+    if ('removeFromPads'==$_POST['action']){
+        if(isset( $_POST['arrangementID']) ){
+            addToPads( $_POST['arrangementID'], 0 );
+        }
+    }
+
     if(isset( $_POST['action']) && 'deleteSetListPart'==$_POST['action']){
         if(isset( $_POST['setListID'])) {
             deleteSetListPart($_POST['setListID']);
@@ -161,7 +173,11 @@ echo "<p><a href='./?action=getNewPersonForm'>Add song/person</a></p>";
 
 if (isset($_GET['action'])){
     if ('getParts'==$_GET['action']){
-        echo getEFileForm();
+        if (isset($_GET['publicationID'])){
+            echo getEFileForm($_GET['publicationID']);
+        } else {
+            echo getEFileForm();
+        }    
     }
 
     if ('getPartsForSet'==$_GET['action']){

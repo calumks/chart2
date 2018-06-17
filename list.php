@@ -155,16 +155,16 @@ function getPublicationForm( $path = '../pdf'){
 
     $return .= "<p><input type='submit' value='ADD'>";
     $return .= "</form></fieldset>";
-    $return .= "<fieldset><legend>Paired pdfs</legend><table>";
-    foreach (getPublicationList() as $key=>$row){
-        $return .= "<tr><td><a href='../pdf/" . $row[0] . "'>" . $row[0] . "</a></td><td>" . $row[1] . "</td><td>" . $row[2] . "</td><td>" . $row[3] . "</td><td>" . $row[4] . "</td></tr>";
-    }
-    $return .= "</table></fieldset>";
+//    $return .= "<fieldset><legend>Paired pdfs</legend><table>";
+//    foreach (getPublicationList() as $key=>$row){
+//        $return .= "<tr><td><a href='../pdf/" . $row[0] . "'>" . $row[0] . "</a></td><td>" . $row[1] . "</td><td>" . $row[2] . "</td><td>" . $row[3] . "</td><td>" . $row[4] . "</td></tr>";
+//    }
+//    $return .= "</table></fieldset>";
 
     return $return;
 }
 
-function listPdfUnlisted( $path ='../pdf' ){
+function listPdfUnlisted( $path = '../pdf' ){
 
 //$path    = '../pdf';
 $files = scandir($path);

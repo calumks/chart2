@@ -1,5 +1,23 @@
 <?php
 
+function addToPads( $arrangementID, $iAdd){
+
+include "mysql-cred.php";
+
+$link  = mysqli_connect( $servername, $username, $password, $database);
+if (mysqli_connect_errno()) {
+    die("Connection failed: " . mysqli_connect_error());
+} 
+    
+    
+$sqlUpdate = "update arrangement set isInPads = " . $iAdd . " WHERE arrangementID = ". $arrangementID . ";";
+//echo $sqlUpdate;
+$result = mysqli_execute(mysqli_prepare($link, $sqlUpdate));
+
+    
+}
+
+
 function postNewPerson(){
 
 include "mysql-cred.php";
@@ -64,6 +82,33 @@ echo "</pre>";
 
 }
 
+function getFormPads( $arrID, $isInPads, $arrLabel){
+    if ($isInPads){
+        return getRemoveFromPadsForm( $arrID, $arrLabel);
+    }
+    else{
+        return getAddToPadsForm( $arrID, $arrLabel);
+    }
+}
+
+function getAddToPadsForm( $arrID, $arrLabel){
+
+$form = "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='addToPads' />";
+$form .= "<input type='hidden' name='arrangementID' value='" . $arrID . "' />";
+$form .= "<input type='submit' value='Add " . $arrLabel . " to pads'></form>";
+return $form;
+}
+
+function getRemoveFromPadsForm( $arrID, $arrLabel){
+
+$form = "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='removeFromPads' />";
+$form .= "<input type='hidden' name='arrangementID' value='" . $arrID . "' />";
+$form .= "<input type='submit' value='Remove " . $arrLabel . " from pads'></form>";
+return $form;
+}
+
 function getNewSongForm(){
 
 $form = "<form action = '' method='POST'>";
@@ -105,12 +150,12 @@ $link  = mysqli_connect( $servername, $username, $password, $database);
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 } 
-$sql = "SELECT name from song order by name  ASC";
+$sql = "SELECT S.name, A.arrangementID, A.isInPads, CONCAT(S.Name, ' ', P.firstName, ' ', P.lastName) as ArrLabel from song AS S LEFT JOIN ( arrangement as A INNER JOIN person as P ON A.arrangerPersonID = P.personID)  ON A.songID = S.songID order by S.name  ASC";
 $result = mysqli_query($link, $sql);
-$return = "<table> \n <tr><th>Name</tr> \n";
+$return = "<table> \n <tr><th>Name<th>Pads</tr> \n";
 if ($result){
     	while($row = mysqli_fetch_row( $result )) {
-		$return .= "<tr><td>" . $row[0] . "</td></tr> \n";
+		$return .= "<tr><td>" . $row[0] . "</td><td>". getFormPads($row[1], $row[2], $row[3]) . "</td></tr> \n";
     	}
 }
 
