@@ -22,5 +22,5 @@ include_once "pdfFromGigB.php";
 include_once "saveRequest.php";
 include_once "sendCode.php";
 include_once "set.php";
-include_once "showRequests.php";
+//include_once "showRequests.php";
 include_once "storeEmail.php";
