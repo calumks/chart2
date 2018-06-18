@@ -125,11 +125,16 @@ if ($partID > 0){
 	    }
     }
     if (!$bIsSection){
-        $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), S.name, IF(c2.countParts>0,'',' (No ".$partShortName.")')) as songName, 'Thornbury Swing Band (". $partLongName . ")', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID 
+        $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), IF(AC.arrCount>1, CONCAT(S.name, ', ', VA.arrangerFirstName, ' ', VA.arrangerLastName), S.name), IF(c2.countParts>0,'',' (No ".$partShortName.")')) as songName, 'Thornbury Swing Band (". $partLongName . ")', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID  
+            INNER JOIN view_arrangement AS VA on VA.arrangementID = A.arrangementID
+            INNER JOIN (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC ON AC.songID = S.songID 
+        ) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID 
         LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart WHERE partID = " . $partID . " GROUP BY arrangementID) as c2 on c2.arrangementID = A.arrangementID 
         LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g ) AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID  WHERE ( c.countParts > 0   ) ORDER BY S.Name ASC;";
     } else {
-        $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), S.name, IF(c2.countParts>0,'',' (No ".$partShortName.")')) as songName, 'Thornbury Swing Band (". $partLongName . ")', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID 
+        $sqlCharts = "SELECT DISTINCTROW CONCAT(IF(A.isInPads=1,'','*'), IF(AC.arrCount>1, CONCAT(S.name, ', ', VA.arrangerFirstName, ' ', VA.arrangerLastName), S.name), IF(c2.countParts>0,'',' (No ".$partShortName.")')) as songName, 'Thornbury Swing Band (". $partLongName . ")', NOW(), c.countParts, A.arrangementID, 1+X.countPages  FROM (arrangement AS A INNER JOIN song as S on S.songID = A.songID  
+            INNER JOIN view_arrangement AS VA on VA.arrangementID = A.arrangementID
+            INNER JOIN (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC ON AC.songID = S.songID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePart GROUP BY arrangementID) as c on c.arrangementID = A.arrangementID 
         LEFT JOIN (SELECT count(*) as countParts, VVV.arrangementID from  view_efilePart AS VVV INNER JOIN part as PPP on VVV.partID=PPP.partID INNER JOIN section as SSS ON SSS.sectionID = PPP.minSectionID WHERE sectionID = " . $partID . " GROUP BY arrangementID) as c2 on c2.arrangementID = A.arrangementID 
         LEFT JOIN (SELECT SUM(endPage)-SUM(startPage) as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g ) AS PP GROUP BY arrangementID ) AS X ON X.arrangementID = A.arrangementID  WHERE ( c.countParts > 0   ) ORDER BY S.Name ASC;";
     }

@@ -2,66 +2,37 @@
 
 function addToSet( $gigID, $order, $arrangementID){
     
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
     if ($arrangementID > 0 && $gigID > 0){
         $sql = "INSERT INTO setList2 (arrangementID, gigID, setListOrder) VALUES('". $arrangementID . "',". $gigID . "," . $order . ");";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
+        $result = my_execute( $sql );
 }
-mysqli_close( $link );
  
 }
 
 
 function deleteSetListPart( $setListID){
     
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
         $sql = "DELETE FROM  setList2 where setListID = ". $setListID . ";";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
-
-mysqli_close( $link );
+        $result = my_execute( $sql );
  
 }
 
 
 function deletePartPage( $efilePartID){
     
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
     if ($efilePartID > 0 ){
         $sql = "DELETE FROM  efilePart where eFilePartID = ". $efilePartID . ";";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
+        $result = my_execute( $sql );
 }
-mysqli_close( $link );
  
 }
 
 function setPartPage( $efileID, $partID, $startPage, $endPage){
     
-include "mysql-cred.php";
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
     if ($endPage >= $startPage && $efileID > 0 && $partID > 0){
         $sql = "INSERT INTO efilePart (efileID, partID, startPage, endPage) VALUES('". $efileID . "',". $partID . "," . $startPage . "," . $endPage . ");";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
+        $result = my_execute( $sql );
 }
-mysqli_close( $link );
  
 }
 

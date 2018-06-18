@@ -1,4 +1,7 @@
 <?php
+// The only purpose of this file is to see how to draw a table in FPDF.
+// This file is not used in chart2.
+
 require('vendor/autoload.php');
 
 class PDF_MC_Table extends FPDF

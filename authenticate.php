@@ -39,26 +39,13 @@ return $breturn;
 }
 
 function getUserFromTsbcode( $tsbcode ){
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
 $sql = "SELECT userid FROM confirmation where tsbcode = '" . $tsbcode ."' LIMIT 1;";
 //echo $sql;
-$result = mysqli_query($link, $sql);
-
-if ($result) {
-    if ($result->num_rows > 0){
-	    $row = mysqli_fetch_row( $result );
-	    return $row[0];
-    } else {
-	    return -1;
-    }
-} else {
-	return -1;
-}
-mysqli_close( $link );
+$ret = -1; // if nothing found
+foreach( listMultiple( $sql ) AS $index=>$row ){
+	$ret = $row[0];
+    } 
+return $ret;
 }
 
 function hasCookieForEmail( $email ){
@@ -122,83 +109,41 @@ mysqli_close( $link );
 }
 
 function isrecognisedip( $cookie ){
-//return true; // ignore IPs AND CODES!
 $breturn = false;
-//$ip = getIP();
-
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
-//$sql = "SELECT COUNT(*) FROM confirmation where tsbcode = '" . $cookie ."' AND ip = '" . $ip . "';";
 $sql = "SELECT COUNT(*) FROM confirmation where tsbcode = '" . $cookie ."';";
-//echo $sql; 
-$result = mysqli_query($link, $sql);
 
-if ($result) {
-	$row = mysqli_fetch_row( $result );
+foreach( listMultiple( $sql ) AS $index=>$row ){
 	if ($row[0] > 0){
 		$breturn = true;
-	} else {
-		;
 	}
-} else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($link);
 }
 
-mysqli_close( $link );
 return $breturn;
 }
 
 function isCookieForEmail( $cookie, $email ){
 $breturn = false;
 
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
 $sql = "SELECT COUNT(*) FROM confirmation INNER JOIN user ON confirmation.userID = user.userID where tsbcode = '" . $cookie ."' AND user.md5email = md5(trim(upper('" . $email . "')));";
-$result = mysqli_query($link, $sql);
 
-if ($result) {
-	$row = mysqli_fetch_row( $result );
+foreach( listMultiple( $sql ) AS $index=>$row ){
 	if ($row[0] > 0){
 		$breturn = true;
-	} else {
-		;
 	}
-} else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($link);
 }
 
-mysqli_close( $link );
 return $breturn;
 }
 
 function isrecognisedAdmin( $cookie ){
 $breturn = false;
 
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
 $sql = "SELECT COUNT(*) FROM confirmation INNER JOIN user on confirmation.userID = user.userID where tsbcode = '" . $cookie ."' AND user.aesEmail is not null";
-//echo $sql; 
-$result = mysqli_query($link, $sql);
-
-if ($result) {
-	$row = mysqli_fetch_row( $result );
+foreach( listMultiple( $sql ) AS $index=>$row ){
 	if ($row[0] > 0){
 		$breturn = true;
-	} else {
-		;
 	}
-} else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($link);
 }
-mysqli_close( $link );
+
 return $breturn;
 }

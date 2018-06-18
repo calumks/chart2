@@ -1,7 +1,8 @@
 <?php 
 require_once "vendor/autoload.php";
 // alphabetical order as everything is called via index.php
-define("ALL_USERS_ARE_ADMINS", "All");
+define("ALL_USERS_ARE_ADMINS", "No");
+//define("ALL_USERS_ARE_ADMINS", "All");
 include_once "arrangement.php";
 include_once "authenticate.php";
 include_once "delete.php";
@@ -22,5 +23,5 @@ include_once "pdfFromGigB.php";
 include_once "saveRequest.php";
 include_once "sendCode.php";
 include_once "set.php";
-include_once "showRequests.php";
+//include_once "showRequests.php";
 include_once "storeEmail.php";
