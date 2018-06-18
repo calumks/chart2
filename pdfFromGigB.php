@@ -36,7 +36,10 @@ $pdf = new Fpdi\Fpdi();
 
 $arrange = array();
 if (isset($partName)){
-    $sqlCharts = "SELECT DISTINCTROW S.name as songName, g.name, g.gigDate, c.countParts, v.arrangementID, XXX.countPages " . $distinctOrder . " FROM (setList2 as v INNER JOIN arrangement AS A on v.arrangementID=A.arrangementID INNER JOIN song as S on S.songID = A.songID INNER JOIN gig as g ON g.gigID = v.gigID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePartSetList2 WHERE  partName='" . $partName . "' GROUP BY arrangementID) as c on c.arrangementID = v.arrangementID   LEFT JOIN (SELECT SUM(countPages) as countPages, arrangementID FROM (SELECT 1 + endPage-startPage as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g WHERE partName='" . $partName . "') AS PP ) AS X GROUP BY arrangementID) AS XXX ON XXX.arrangementID = A.arrangementID WHERE ( 0 " . $where . " ) " . $orderByList . ";";
+    $sqlCharts = "SELECT DISTINCTROW IF(AC.arrCount>1, CONCAT(S.name, ', ', VA.arrangerFirstName, ' ', VA.arrangerLastName), S.name) as songName, g.name, g.gigDate, c.countParts, v.arrangementID, XXX.countPages " . $distinctOrder . " FROM (setList2 as v INNER JOIN arrangement AS A on v.arrangementID=A.arrangementID INNER JOIN song as S on S.songID = A.songID 
+    INNER JOIN view_arrangement AS VA on VA.arrangementID = A.arrangementID
+    INNER JOIN (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC ON AC.songID = S.songID 
+    INNER JOIN gig as g ON g.gigID = v.gigID) LEFT JOIN (SELECT count(*) as countParts, arrangementID from  view_efilePartSetList2 WHERE  partName='" . $partName . "' GROUP BY arrangementID) as c on c.arrangementID = v.arrangementID   LEFT JOIN (SELECT SUM(countPages) as countPages, arrangementID FROM (SELECT 1 + endPage-startPage as countPages, arrangementID FROM (SELECT DISTINCTROW fileName, startPage, endPage, arrangementID FROM view_efilePart as g WHERE partName='" . $partName . "') AS PP ) AS X GROUP BY arrangementID) AS XXX ON XXX.arrangementID = A.arrangementID WHERE ( 0 " . $where . " ) " . $orderByList . ";";
 } else {
     $sqlCharts = "SELECT 1 from dual where false;";
 }
