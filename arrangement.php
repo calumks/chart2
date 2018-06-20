@@ -35,6 +35,13 @@ $result = my_execute( $sqlUpdate);
 
 }
 
+function addToBackup( $arrangementID, $iAdd){
+
+$sqlUpdate = "update arrangement set isBackedUp = " . $iAdd . " WHERE arrangementID = ". $arrangementID . ";";
+//echo $sqlUpdate;
+$result = my_execute( $sqlUpdate);
+
+}
 
 function postNewPerson(){
 
@@ -69,6 +76,15 @@ echo "</pre>"; // ????
 
 }
 
+function getFormBackup( $arrID, $isIn, $arrLabel){
+    if ($isIn){
+        return getRemoveFromBackupForm( $arrID, $arrLabel);
+    }
+    else{
+        return getAddToBackupForm( $arrID, $arrLabel);
+    }
+}
+
 function getFormPads( $arrID, $isInPads, $arrLabel){
     if ($isInPads){
         return getRemoveFromPadsForm( $arrID, $arrLabel);
@@ -78,12 +94,31 @@ function getFormPads( $arrID, $isInPads, $arrLabel){
     }
 }
 
+function getAddToBackupForm( $arrID, $arrLabel){
+
+$form = "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='addToBackup' />";
+$form .= "<input type='hidden' name='arrangementID' value='" . $arrID . "' />";
+$form .= "<input type='submit' value='Add " . $arrLabel . " to back-up'></form>";
+return $form;
+}
+
+
 function getAddToPadsForm( $arrID, $arrLabel){
 
 $form = "<form action = '' method='POST'>";
 $form .= "<input type='hidden' name='action' value='addToPads' />";
 $form .= "<input type='hidden' name='arrangementID' value='" . $arrID . "' />";
 $form .= "<input type='submit' value='Add " . $arrLabel . " to pads'></form>";
+return $form;
+}
+
+function getRemoveFromBackupForm( $arrID, $arrLabel){
+
+$form = "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='removeFromBackup' />";
+$form .= "<input type='hidden' name='arrangementID' value='" . $arrID . "' />";
+$form .= "<input type='submit' value='Remove " . $arrLabel . " from back-up'></form>";
 return $form;
 }
 
@@ -131,10 +166,11 @@ return $form;
 
 function getSongs(){
 
-$sql = "SELECT S.name, A.arrangementID, A.isInPads, CONCAT(S.Name, ' ', P.firstName, ' ', P.lastName) as ArrLabel from song AS S LEFT JOIN ( arrangement as A INNER JOIN person as P ON A.arrangerPersonID = P.personID)  ON A.songID = S.songID order by S.name  ASC";
-$return = "<table> \n <tr><th>Name<th>Pads</tr> \n";
+$sql = "SELECT S.name, A.arrangementID, A.isInPads, CONCAT(S.Name, ' ', P.firstName, ' ', P.lastName) as ArrLabel, A.isBackedUp from song AS S LEFT JOIN ( arrangement as A INNER JOIN person as P ON A.arrangerPersonID = P.personID)  ON A.songID = S.songID order by S.name  ASC";
+//$return = "<table> \n <tr><th>Name<th>Pads</tr> \n";
+$return = "<table> \n <tr><th>Name<th>Pads<th>Back-up</tr> \n";
     	foreach( listMultiple( $sql ) AS $index=>$row ){
-		$return .= "<tr><td>" . $row[0] . "</td><td>". getFormPads($row[1], $row[2], $row[3]) . "</td></tr> \n";
+		$return .= "<tr><td>" . $row[3] . "</td><td>". getFormPads($row[1], $row[2], "") . "</td><td>". getFormBackup($row[1], $row[4], "") . "</td></tr> \n";
     	}
 
 $return .= "</table>";
