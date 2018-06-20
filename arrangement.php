@@ -135,7 +135,7 @@ function getNewSongForm(){
 
 $form = "<form action = '' method='POST'>";
 $form .= "<input type='hidden' name='action' value='addSong' />";
-$form .= "<p>Song name<textarea name='songName'>Song name (enter here)</textarea></p> ";
+$form .= "<p>Song name<textarea name='songName'></textarea></p> ";
 $form .= "<input type='submit' value='Add'></form>";
 return $form;
 }
@@ -144,8 +144,8 @@ function getNewPersonForm(){
 
 $form = "<form action = '' method='POST'>";
 $form .= "<input type='hidden' name='action' value='addPerson' />";
-$form .= "<p>First name<textarea name='firstName'>First name (enter here)</textarea></p> ";
-$form .= "<p>Last name<textarea name='lastName'>Last name (enter here)</textarea></p> ";
+$form .= "<p>First name<textarea name='firstName'></textarea></p> ";
+$form .= "<p>Last name<textarea name='lastName'></textarea></p> ";
 $form .= "<p>Nickname<textarea name='nickName'></textarea></p> ";
 $form .= "<input type='submit' value='Add'></form>";
 return $form;
@@ -168,9 +168,11 @@ function getSongs(){
 
 $sql = "SELECT S.name, A.arrangementID, A.isInPads, CONCAT(S.Name, ' ', P.firstName, ' ', P.lastName) as ArrLabel, A.isBackedUp from song AS S LEFT JOIN ( arrangement as A INNER JOIN person as P ON A.arrangerPersonID = P.personID)  ON A.songID = S.songID order by S.name  ASC";
 //$return = "<table> \n <tr><th>Name<th>Pads</tr> \n";
-$return = "<table> \n <tr><th>Name<th>Pads<th>Back-up</tr> \n";
+//$return = "<table> \n <tr><th>Name<th>Pads<th>Back-up</tr> \n";
+$return = "<table> \n <tr><th>Pads<th>Back-up<th>Name</tr> \n";
     	foreach( listMultiple( $sql ) AS $index=>$row ){
-		$return .= "<tr><td>" . $row[3] . "</td><td>". getFormPads($row[1], $row[2], "") . "</td><td>". getFormBackup($row[1], $row[4], "") . "</td></tr> \n";
+//    	$return .= "<tr><td>" . $row[3] . "</td><td>". getFormPads($row[1], $row[2], "") . "</td><td>". getFormBackup($row[1], $row[4], "") . "</td></tr> \n";
+		$return .= "<tr><td>". getFormPads($row[1], $row[2], "") . "</td><td>". getFormBackup($row[1], $row[4], "") . "</td><td>" . $row[3] . "</td></tr> \n";
     	}
 
 $return .= "</table>";

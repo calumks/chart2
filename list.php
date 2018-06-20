@@ -124,7 +124,7 @@ function getPublicationForm( $path = '../pdf'){
         $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
     }
     $return .= "</select>";
-    $return .= "<p><textarea name='description'>Publication description</textarea></p>";
+    $return .= "<p>Publication description<textarea name='description'></textarea></p>";
 
     $return .= "<p><input type='submit' value='ADD'>";
     $return .= "</form></fieldset>";
