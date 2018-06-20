@@ -87,6 +87,20 @@ if (hasAdminCookie()){
         }
     }
 
+
+    if ('addToBackup'==$_POST['action']){
+        if(isset( $_POST['arrangementID']) ){
+            addToBackup( $_POST['arrangementID'], 1 );
+        }
+    }
+
+    if ('removeFromBackup'==$_POST['action']){
+        if(isset( $_POST['arrangementID']) ){
+            addToBackup( $_POST['arrangementID'], 0 );
+        }
+    }
+
+
     if ('addToPads'==$_POST['action']){
         if(isset( $_POST['arrangementID']) ){
             addToPads( $_POST['arrangementID'], 1 );
