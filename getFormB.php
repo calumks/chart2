@@ -57,14 +57,25 @@ $sql = "SELECT DISTINCT V.arrangementID, CONCAT(XYZ.partLabel, ' ', IF(AA.isInPa
 //echo $sql;
 $result = mysqli_query($link, $sql);
 if ($result){
+    $form .= "<div>";
+    $form .= "<ol>";
+
 	$i = 1;
     	while($row = mysqli_fetch_row( $result )) {
 //		$check = "<p><input type='checkbox' name='arrangement[]' value='" . $row[0] . "'>" . $i++ . ". " . $row[1] . " " . getPartLabel( $row[0] );
-		$check = "<p>";
+//		$check = "<p>";
+		$check = "";
+		$check .= "<li>";
+		$check .= "<p>";
 //		$check .= "<input type='checkbox' name='arrangement[]' value='" . $row[0] . "'>";
-		$check .= $i++ . ". " . $row[1] . "<a href='.?arrangementID=" . $row[0] . "&gigID=". $gigID . "'>".$row[2] . "</a>" . " ";
+		$check .= $row[1] . "<a href='.?arrangementID=" . $row[0] . "&gigID=". $gigID . "'>".$row[2] . "</a>" . " ";
+		$check .= "</p>";
+		$check .= "</li>";
 		$form = $form . $check;
     	}
+    $form .= "</ol>";
+    $form .= "</div>";
+
 }
 
 $sql = "SELECT DISTINCT partID, partName FROM view_efilePart";

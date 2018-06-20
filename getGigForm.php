@@ -30,7 +30,7 @@ function getChartsForGig( $gigID = -1){
         if( !$res[7]) $label2 .= " (no back-up)";
 //        if( $res[5]>1) $label= $res[4];
         $check = "<a href='.?gigID=". $gigID . "&arrangementID=" . $res[3] . "'>".$label . "</a>". $label2 . "\n" . " ";
-        $return .= "<li>" . $check . "</li>";
+        $return .= "<li><p>" . $check . "</p></li>";
     }
     $return .= "</ol>";
     return $return;
