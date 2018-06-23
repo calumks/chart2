@@ -9,7 +9,6 @@ define ('SITE_ROOT', realpath(dirname(__FILE__)));
 function deleteFile($fileNameExclPath){
 
 $sql = "SELECT COUNT(*) from efile where name='" . $fileNameExclPath . "'";
-//echo $sql;
 $bFound = true;
 foreach( listMultiple($sql) as $index=>$row ){
         		if ( $row[0]==0 ){
@@ -37,7 +36,6 @@ function renameFile($efileID){
     $newName = newName($oldName,10) . ".pdf";
     rename(SITE_ROOT . '/pdf/' . $oldName, SITE_ROOT . '/pdf/' . $newName);
     $sql = "UPDATE efile SET name='" . $newName . "' WHERE efileID = " . $efileID;
- //   echo $sql;
     include "mysql-cred.php";
     $link  = mysqli_connect( $servername, $username, $password, $database);
     if (mysqli_connect_errno()) {
@@ -81,7 +79,6 @@ function setPublication(){
 
     } elseif (isset($_POST['description']) && strlen($_POST['description']) > 0 && isset($_POST['songID']) && isset($_POST['arrangerPersonID'])  && $_POST['songID']>0 && $_POST['arrangerPersonID']>0 ){
         $sql = "INSERT INTO arrangement (songID, arrangerPersonID) VALUES(". $_POST['songID'] . ",". $_POST['arrangerPersonID'] . ");";
-//        echo $sql;
         $last_id = my_insert_id($sql);
         $sql = "INSERT INTO publication (arrangementID, description) VALUES(". $last_id . ",'". $_POST['description'] . "');";
         $last_id = my_insert_id($sql);
@@ -138,7 +135,6 @@ $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
 $sql = "SELECT name from efile";
-//echo $sql;
 $pairedFiles = array();
     	foreach( listMultiple( $sql ) AS $index=>$row ){
     	$pairedFiles[] = $row[0];
@@ -186,7 +182,6 @@ function numpages($filename){
 function getPublicationList(){
 
 $sql = "SELECT E.name, S.name, P.description, PP.firstName, PP.lastName FROM efile as E, publication as P, arrangement as A, person as PP, song AS S WHERE E.publicationID = P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID ORDER BY E.name";
-//echo $sql;
 $details = array();
     	foreach(listMultiple( $sql ) AS $index=>$row ){
     	    $details[] = $row;
@@ -198,7 +193,6 @@ return $details;
 function arrangement( $filename ){
 
 $sql = "SELECT E.name, P.description, PP.firstName, PP.lastName FROM efile as E, publication as P, arrangement as A, person as PP WHERE E.publicationID = P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND E.name = '" . $filename . "'";
-//echo $sql;
 $details = "";
 	$i = 1;
     	foreach(listMultiple( $sql ) AS $index=>$row ){
@@ -215,7 +209,6 @@ function countParts( $filename ){
 
 $sql = "SELECT COUNT(*) FROM (SELECT DISTINCT partName FROM view_efilePart AS V INNER JOIN efile AS E on E.efileID = V.efileID where E.name = '" . $filename . "') AS C";
 
-//echo $sql;
 $details = "";
     	foreach( listMultiple( $sql ) AS $index=>$row){
     	$details = $row[0];

@@ -89,7 +89,6 @@ function getPartForm($efileID){
     foreach (listMultiple("SELECT E.name AS Ename  FROM efile as E WHERE  E.efileID = " . $efileID . "")  as $key=>$song){
         $fname = $song[0];
     }   
-//    echo "get part form";
     $return = "";
     $return .= "<fieldset><legend>Delete part/page pairs</legend>";
     $return .= "<div><table>";
@@ -116,7 +115,6 @@ function getPartForm($efileID){
     $return .= "<fieldset><legend>Add part/page pair</legend>";
     $return .= "<p><a href='../pdf/" . $fname . "'>" . $fname . "</a></p>";
     $numpages = numPages('../pdf/' . $fname);
-//    echo $numpages;
     $return .= "<div>";
     $return .= "<form action='' method='POST'>";
     $return .= "<input type='hidden' name='action' value='addEfilePart'>";
@@ -177,7 +175,6 @@ function getGigSetForm($gigID){
         $return .= "</form>";
         $return .= "</td></tr>";
         $return .= "<tr>";
-//        $return .= "<td>" . $song[2] . "</td>";
         $return .= "<td>";
         $return .= "<form action='' method='POST'>";
         $return .= "<input type='hidden' name='action' value='deleteSetListPart'>";

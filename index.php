@@ -9,7 +9,6 @@ header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 <?php 
 $bShowEmailForm = true;
 include_once "include_refsB.php";
-//echo getLatestGigID();
 if (isset($_REQUEST['confirmation'])) {
 	setValidCookie( $_REQUEST['confirmation'] );
 	header('Location: https://tsbchart.000webhostapp.com');
@@ -18,7 +17,6 @@ if (isset($_REQUEST['confirmation'])) {
         
 			deleteCookie();
 	        header('Location: https://tsbchart.000webhostapp.com');
-//			echo "deleterequested";
     }
 	if ('storeEmail'==$_REQUEST['action']) {
 		if (!(storeEmail())){
@@ -46,9 +44,7 @@ if (isset($_REQUEST['confirmation'])) {
 // authenticate user.  Valid cookie or no valid cookie
 // if valid cookie, provide content
 // if no valid cookie, show disabled forms and offer means of authentication
-//include_once "include_refsB.php";
 if (hasValidCookie()){
-//    echo "has valid cookie";
     $arrangementID = -1; $gigID = -1;
 	if (isset($_GET['arrangementID'])) {
         $arrangementID = $_GET['arrangementID'];
@@ -90,9 +86,7 @@ if (hasValidCookie()){
 	echo getFooter();
 			exit();
 }
-//print_r($_COOKIE);
 
-//echo "session" . print_r($_SESSION,1);
 ?>
 </body>
 </html>

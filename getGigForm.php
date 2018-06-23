@@ -13,7 +13,6 @@ function getLatestGigID(){
     }
 
 }
-//echo getLatestGigID();
 
 function getChartsForGig( $gigID = -1){
     $return = "";
@@ -21,14 +20,12 @@ function getChartsForGig( $gigID = -1){
         $gigID = getLatestGigID();
     }
     $sql = "SELECT T.setListID, T.setListOrder, V.name, V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), AC.arrCount, IF(AC.arrCount>1, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), V.name), A.isBackedUp FROM setList2 AS T, view_arrangement AS V, (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC, arrangement AS A WHERE AC.songID = A.songID AND A.arrangementID = V.arrangementID AND T.arrangementID = V.arrangementID AND T.gigID = " . $gigID . " order by T.setListOrder ASC";
- //echo $sql;
  $i = 1;
     $return = "<ol>";
     foreach (listMultiple($sql) AS $count=>$res){
         $label = $res[6];
         $label2 = "";
         if( !$res[7]) $label2 .= " (no back-up)";
-//        if( $res[5]>1) $label= $res[4];
         $check = "<a href='.?gigID=". $gigID . "&arrangementID=" . $res[3] . "'>".$label . "</a>". $label2 . "\n" . " ";
         $return .= "<li><p>" . $check . "</p></li>";
     }
@@ -49,7 +46,6 @@ $link  = mysqli_connect( $servername, $username, $password, $database);
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 } 
-//$form = "<form action = 'allChart.php' method='GET'>";
 $form = "<form action = '' method='GET'>";
 $form .= "<input type='hidden' name='action' value='changeGig' />";
 
@@ -113,7 +109,6 @@ $link  = mysqli_connect( $servername, $username, $password, $database);
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 } 
-//$form = "<form action = 'allChart.php' method='GET'>";
 $form = "<form action = '' method='GET'>";
 $form .= "<input type='hidden' name='action' value='getChartList' />";
 

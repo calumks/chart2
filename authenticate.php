@@ -40,7 +40,6 @@ return $breturn;
 
 function getUserFromTsbcode( $tsbcode ){
 $sql = "SELECT userid FROM confirmation where tsbcode = '" . $tsbcode ."' LIMIT 1;";
-//echo $sql;
 $ret = -1; // if nothing found
 foreach( listMultiple( $sql ) AS $index=>$row ){
 	$ret = $row[0];
@@ -87,7 +86,6 @@ if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error);
 } 
 $sql = "SELECT confirmationID FROM confirmation where confirmationCode = '" . $confirmation ."' LIMIT 1;";
-//echo $sql; 
 $result = mysqli_query($link, $sql);
 
 if ($result) {

@@ -30,7 +30,6 @@ return $lastID;
 function addToPads( $arrangementID, $iAdd){
 
 $sqlUpdate = "update arrangement set isInPads = " . $iAdd . " WHERE arrangementID = ". $arrangementID . ";";
-//echo $sqlUpdate;
 $result = my_execute( $sqlUpdate);
 
 }
@@ -38,7 +37,6 @@ $result = my_execute( $sqlUpdate);
 function addToBackup( $arrangementID, $iAdd){
 
 $sqlUpdate = "update arrangement set isBackedUp = " . $iAdd . " WHERE arrangementID = ". $arrangementID . ";";
-//echo $sqlUpdate;
 $result = my_execute( $sqlUpdate);
 
 }
@@ -167,11 +165,8 @@ return $form;
 function getSongs(){
 
 $sql = "SELECT S.name, A.arrangementID, A.isInPads, CONCAT(S.Name, ' ', P.firstName, ' ', P.lastName) as ArrLabel, A.isBackedUp from song AS S LEFT JOIN ( arrangement as A INNER JOIN person as P ON A.arrangerPersonID = P.personID)  ON A.songID = S.songID order by S.name  ASC";
-//$return = "<table> \n <tr><th>Name<th>Pads</tr> \n";
-//$return = "<table> \n <tr><th>Name<th>Pads<th>Back-up</tr> \n";
 $return = "<table> \n <tr><th>Pads<th>Back-up<th>Name</tr> \n";
     	foreach( listMultiple( $sql ) AS $index=>$row ){
-//    	$return .= "<tr><td>" . $row[3] . "</td><td>". getFormPads($row[1], $row[2], "") . "</td><td>". getFormBackup($row[1], $row[4], "") . "</td></tr> \n";
 		$return .= "<tr><td>". getFormPads($row[1], $row[2], "") . "</td><td>". getFormBackup($row[1], $row[4], "") . "</td><td>" . $row[3] . "</td></tr> \n";
     	}
 
@@ -210,11 +205,9 @@ $form .= "<p>Gig date<input type='date' name='gigDate' ></p> ";
 $form .= "<p>Set list (lowest numbers come first)</p> ";
 
 $sql = "SELECT DISTINCT arrangementID, songName FROM view_efilePart ORDER BY songName ASC";
-//echo $sql;
 	$i = 1;
     	foreach( listMultiple( $sql ) AS $index=>$row ){
 		$check = "<p><input type='text' name='arrangement[" . $row[0] . "]' > " . $row[1];
-//		$check = "<p><input type='checkbox' name='arrangement[]' value=" . $row[0] . " > " . $row[1];
 		$form = $form . $check;
     	}
 $form .= "<input type='submit' value='submit'></form>";

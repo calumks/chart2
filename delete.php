@@ -3,7 +3,6 @@
 function getCopySetForm(){
 
 $sqlCountTargets = "SELECT COUNT(*) FROM (SELECT gig.gigID, COALESCE(S.countCharts,0) AS counter FROM gig LEFT JOIN (SELECT COUNT(*) as countCharts, gigID from setList2 GROUP BY gigID) AS S ON S.gigID=gig.gigID WHERE COALESCE(S.countCharts,0)=0) AS C";
-//echo $sqlCountTargets;
     	foreach( listMultiple( $sqlCountTargets ) AS $index=>$row ){
         	$counter = $row[0];
     	}
@@ -45,13 +44,11 @@ $result = my_execute( $sql2 );
 
 function getDeleteSetForm(){
 
-//$form = "<form action = 'allChart.php' method='GET'>";
 $form = "<fieldset><legend>Delete set</legend><form action = '' method='POST'>";
 $form .= "<input type='hidden' name='action' value='deleteSetList' />";
 $form .= "<p><select name='gigID'>";
 
 $sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
-//echo $sql;
 	$i = 1;
     	foreach( listMultiple( $sql ) AS $index=>$row ){
     	    if(11!=$row[0]){
@@ -97,7 +94,6 @@ $form .= "<input type='hidden' name='action' value='getPartsForSet' />";
 $form .= "<p><select name='gigID'>";
 
 $sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
-//echo $sql;
 	$i = 1;
     	foreach( listMultiple( $sql ) AS $index=>$row ){
     	    if(11!=$row[0]){
@@ -116,7 +112,6 @@ $form .= "<input type='hidden' name='action' value='getSetList' />";
 $form .= "<p><select name='gigID'>";
 
 $sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
-//echo $sql;
 	$i = 1;
     	foreach( listMultiple( $sql ) AS $index=>$row ){
     	    if(11!=$row[0]){

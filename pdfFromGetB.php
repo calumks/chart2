@@ -2,7 +2,6 @@
 use \setasign\Fpdi;
 function pdfFromGet(){
 
-//print_r($_GET);
 $where=" OR V.efileID=-999 ";
 $partWhere=" OR V.partID=-999 ";
 $arrangeWhere=" OR V.efileID in (SELECT efileID from efile where publicationID in (SELECT publicationID from publication WHERE arrangementID IN (-999";

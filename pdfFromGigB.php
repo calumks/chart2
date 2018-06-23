@@ -18,7 +18,6 @@ if (isset($_GET['gigID']) && isset($_GET['part'])){
 
 function pdfFromGigExplicit($gigID, $partName, $directoryBase, $includeMusic = true, $outputStem=''){
 
-//print_r($_GET);
 $where="";
 $partWhere="";
 $distinctOrder = " ,v.setListOrder ";
@@ -43,7 +42,6 @@ if (isset($partName)){
 } else {
     $sqlCharts = "SELECT 1 from dual where false;";
 }
-///echo $sqlCharts;
 $pageCount=1;
 	$rowcount = 0;
     	foreach(listMultiple( $sqlCharts ) AS $index=>$row ){
@@ -68,8 +66,6 @@ $pageCount=1;
 	}
         $rowcount++;
 	}
-//}
-//echo "<pre>" . __FILE__ . print_r($arrange,1) . "</pre>";
 if ($includeMusic){
 require_once('getAllNotes.php');
 getAllNotes($pdf, $arrange);
@@ -90,7 +86,6 @@ getAllNotes($pdf, $arrange);
 		// use the imported page and place it at point 10,10 with a width of 200 mm
 	}
     }
-//}
 } else { // end if ($includeMusic)
 $pdf->Write(5,"\n(Notes and music excluded)\n");
 }
