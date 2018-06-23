@@ -23,7 +23,7 @@ if (hasAdminCookie()){
     }
 
     if ('addPerson'==$_POST['action']){
-        postNewPerson();
+        postNewPerson($_POST);
     }
 
     if ('addNewUser'==$_POST['action']){
@@ -35,7 +35,7 @@ if (hasAdminCookie()){
     }
     
     if ('addSong'==$_POST['action']){
-        postNewSong();
+        postNewSong($_POST);
     }
 
     if ('setPublication'==$_REQUEST['action']){

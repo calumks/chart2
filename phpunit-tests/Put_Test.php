@@ -22,15 +22,22 @@ class Put_Test extends PHPUnit_Framework_TestCase
 	deleteFile( 'noFile.abc');
   }
 
-/*
+
   public function test_postNewPerson(){
         postNewPerson();
 }
 
-  public function test_MiscPut1(){
-//        postNewPerson();
-                storeNewUser($_POST['newEmail'],$_POST['newNickName']);
+  public function test_storeNewUser(){
+                storeNewUser('dud@gmail.com','Dopey');
+}
+
+  public function test_postNewSong(){
         postNewSong();
+}
+
+
+/*
+  public function test_MiscPut1(){
         setPublication();
             deletePartPage( $_POST['efilePartID'] );
             setPartPage( $_POST['efileID'], $_POST['partID'], $_POST['startPage'], $_POST['endPage']);

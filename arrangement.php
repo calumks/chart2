@@ -41,19 +41,22 @@ $result = my_execute( $sqlUpdate);
 
 }
 
-function postNewPerson(){
+function postNewPerson($person=array()){
 
-$sql = "insert into person (firstName, lastName, nickName) VALUES( '".$_POST['firstName'] ."', '".$_POST['lastName']."', '".$_POST['nickName']."');";
+	if (isset($person['firstName']) && isset($person['lastName']) && isset($person['nickName'])){
+
+$sql = "insert into person (firstName, lastName, nickName) VALUES( '".$person['firstName'] ."', '".$person['lastName']."', '".$person['nickName']."');";
 $result = my_execute( $sql);
+}
 
 }
 
 
-function postNewSong(){
-    
-$sqlNewSong = "insert into song  (name) VALUES( '".$_POST['songName'] ."');";
+function postNewSong($song=array()){
+    if (isset($song['songName'])){
+$sqlNewSong = "insert into song  (name) VALUES( '".$song['songName'] ."');";
 $result = my_execute( $sqlNewSong );
-
+}
 }
 
 function postNewArrangement(){
