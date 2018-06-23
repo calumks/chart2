@@ -1,24 +1,21 @@
 <?php 
+//echo "<pre>POST " . print_r($_POST,1) . "</pre>";
+//echo "<pre>FILES " . print_r($_FILES,1) . "</pre>";
 // do all post stuff first then redirect
-//echo "\n\n GET";
-//print_r($_GET);
-//echo "\n\n POST";
-//print_r($_POST);
-//echo "\n\n FILES";
-//print_r($_FILES);
 //
 // authenticate user.  Valid cookie or no valid cookie
 // if valid cookie, provide content
 // if no valid cookie, go to main menu
 include_once "../include_refsB.php";
-//include_once "include_refsMain.php";
 if ($_POST){
 if (hasValidCookie()){
 if (isset($_POST['action'])){
 
 if (hasAdminCookie()){
     if ('uploadPDF'==$_POST['action']){
-        receiveFile();
+    	if (isset($_FILES['myUpload'])){
+        	receiveFile( $_FILES['myUpload']);
+	}
     }
 
     if ('deletePDF'==$_POST['action'] && isset( $_POST['fileNameExclPath'])){
@@ -27,10 +24,6 @@ if (hasAdminCookie()){
 
     if ('addPerson'==$_POST['action']){
         postNewPerson();
-//        echo getNewSongForm();
-//        echo getSongs();
-//        echo getNewPersonForm();
-//        echo getPeople();
     }
 
     if ('addNewUser'==$_POST['action']){
@@ -43,17 +36,10 @@ if (hasAdminCookie()){
     
     if ('addSong'==$_POST['action']){
         postNewSong();
-//        echo getNewSongForm();
-//        echo getSongs();
-//        echo getNewPersonForm();
-//        echo getPeople();
     }
 
     if ('setPublication'==$_REQUEST['action']){
         setPublication();
-//        echo getPublicationForm();
-//        echo print_r(listPdfUnlisted(),1);
-//        listPdf();
     }
 }
 
@@ -128,9 +114,6 @@ if (hasAdminCookie()){
 
     if ('addSetList'==$_POST['action']){
         postNewSetList();
-//        echo getEditSetForm();
-//        echo getNewSetListForm();
-//        echo getDeleteSetForm();
     }
 
 
@@ -144,9 +127,6 @@ if (hasAdminCookie()){
 
     if ('deleteSetList'==$_REQUEST['action']){
         deleteSet();
-//        echo getEditSetForm();
-//        echo getNewSetListForm();
-//        echo getDeleteSetForm();
     }
 }
 }
@@ -162,24 +142,16 @@ exit();
 
         <body>
 <?php 
-//echo "\n\n GET";
-//print_r($_GET);
-//echo "\n\n POST";
-//print_r($_POST);
-//echo "\n\n FILES";
-//print_r($_FILES);
 
 // authenticate user.  Valid cookie or no valid cookie
 // if valid cookie, provide content
 // if no valid cookie, go to main menu
 include_once "../include_refsB.php";
-//include_once "include_refsMain.php";
 if (hasValidCookie()){
 echo "<p><a href='../'>Main menu</a></p>";
 echo "<p><a href='./?action=getNewSetListForm'>Edit set</a></p>";
 echo "<p><a href='./?action=getNotes'>Edit notes</a></p>";
 if (hasAdminCookie()){
-//echo "<p><a href='./?action=getNewPublicationForm'>Add publication</a></p>";
 echo "<p><a href='./?action=getParts'>Assign parts</a></p>";
 echo "<p><a href='./?action=listPdf'>Add pdf</a></p>";
 echo "<p><a href='./?action=getNewPersonForm'>Add song/person</a></p>";
@@ -218,7 +190,6 @@ if (isset($_GET['action'])){
     if ('listPdf'==$_GET['action']){
         listPdf();
         echo getPublicationForm();
-//        echo print_r(listPdfUnlisted(),1);
         echo getUploadFileForm();
     }
 
@@ -239,7 +210,6 @@ if (isset($_GET['action'])){
         echo getCopySetForm();
         echo getNewSetListForm();
         echo getDeleteSetForm();
-//        echo getPopular();
     }
 
     if ('getNewPersonForm'==$_GET['action']){
@@ -249,10 +219,6 @@ if (isset($_GET['action'])){
         echo getPeople();
         echo getNewUserForm();
     }
-
-//    if ('getNewPublicationForm'==$_REQUEST['action']){
-//        echo getPublications();
-//    }
     
     
 

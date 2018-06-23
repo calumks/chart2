@@ -66,6 +66,18 @@ class Form_Test extends PHPUnit_Framework_TestCase
 
 // forms with positive length (even in a blank database)
 
+  public function test_Cookie(){
+    $this->assertTrue( !hasValidCookie() );
+  }
+
+  public function test_CookieAdmin(){
+    $this->assertTrue( !hasAdminCookie() );
+  }
+
+  public function test_List(){
+    $this->assertTrue( strlen( getOutputLink(listAll(-1))) > 10	);
+  }  
+
   public function test_indexFormLength(){
     $this->assertTrue( strlen( getEmailForm() ) > 10 );
     $this->assertTrue( strlen( getFooter() ) > 10 );

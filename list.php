@@ -16,7 +16,9 @@ foreach( listMultiple($sql) as $index=>$row ){
         		 }
         }
 if( !$bFound){
-    unlink(SITE_ROOT . '/pdf/' . $fileNameExclPath);
+	if( file_exists(SITE_ROOT . '/pdf/' . $fileNameExclPath)){
+	    unlink(SITE_ROOT . '/pdf/' . $fileNameExclPath);
+	}
 }    
 
 }
@@ -46,19 +48,23 @@ function renameFile($efileID){
 }
 
 
-function receiveFile(){
-    
+function receiveFile( $file=array()){
+//echo "<pre>" .     print_r($file,1) . "</pre>";
+   if (!isset($file['error']) || !isset($file['tmp_name']) || !isset($file['name'])){
+	return false;
+   }
+ 
    $uploads_dir = "pdf";
 // https://secure.php.net/manual/en/function.move-uploaded-file.php'    
 
 
-if ($_FILES['myUpload']['error'] == UPLOAD_ERR_OK) {
-    $tmp_name = $_FILES['myUpload']['tmp_name'];
+if ($file['error'] == UPLOAD_ERR_OK) {
+    $tmp_name = $file['tmp_name'];
         // basename() may prevent filesystem traversal attacks;
         // further validation/sanitation of the filename may be appropriate
-    $name = basename($_FILES['myUpload']['name']);
+    $name = basename($file['name']);
     $newName = newName($name,10) . ".pdf";
-    if(mime_content_type($_FILES['myUpload']['tmp_name']) == "application/pdf" && !file_exists(SITE_ROOT . "/$uploads_dir/$newName")){
+    if(mime_content_type($file['tmp_name']) == "application/pdf" && !file_exists(SITE_ROOT . "/$uploads_dir/$newName")){
         move_uploaded_file($tmp_name, SITE_ROOT . "/$uploads_dir/$newName");
         return true;
     } else {

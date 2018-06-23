@@ -63,7 +63,7 @@ return $breturn;
 }
 
 function hasAdminCookie(){
-if (ALL_USERS_ARE_ADMINS == true) return true;
+if (ALL_USERS_ARE_ADMINS == 'All') return true;
 $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
