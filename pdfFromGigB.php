@@ -11,7 +11,7 @@ if (isset($input['includeMusic'])){
 if (isset($input['gigID']) && isset($input['part'])){
     deleteOutput( getcwd() );
     include "saveRequest.php";
-    saveRequest();    
+    saveRequest($input);    
     return pdfFromGigExplicit($input['gigID'], $input['part'], getcwd(), $includeMusic );
 }
 }

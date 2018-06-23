@@ -52,7 +52,7 @@ if (isset($input['arrangement'])){
 	}
         }
 include "saveRequest.php";
-saveRequest();
+saveRequest($input);
 $yourFile =  'output/'. md5(time()) . 'myfile.pdf';
 $pdf->Output(getcwd() . "/" . $yourFile,'F');
 return $yourFile;
