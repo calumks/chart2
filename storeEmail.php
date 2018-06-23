@@ -1,12 +1,12 @@
 <?php
-function storeEmail(){
-    $sql = "SELECT COUNT(*) from user where md5email = md5(trim(upper('" . $_REQUEST['email'] . "')))";
+function storeEmail( $email = ""){
+    $sql = "SELECT COUNT(*) from user where md5email = md5(trim(upper('" . $email . "')))";
     foreach( listMultiple( $sql ) AS $index=>$row ){
 		if ($row[0] > 0) {
-			sendCode( $_REQUEST['email'] );
+			sendCode( $email );
 			return true;
 		} else {
-			sendAdminDudEmail( $_REQUEST['email'] );
+			sendAdminDudEmail( $email );
 			return false;
 		}
     }

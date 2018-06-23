@@ -19,7 +19,7 @@ if (isset($_REQUEST['confirmation'])) {
 	        header('Location: https://tsbchart.000webhostapp.com');
     }
 	if ('storeEmail'==$_REQUEST['action']) {
-		if (!(storeEmail())){
+		if (!(storeEmail($_REQUEST['email']))){
 			echo "<p>Email not recognised.</p>";
 			echo getEmailForm();
 			echo getFooter();
