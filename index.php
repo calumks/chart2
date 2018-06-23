@@ -62,12 +62,12 @@ if (hasValidCookie()){
 			exit();
 	       
 		} elseif ( 'getChart'==$_GET['action']) {
-			echo getOutputLink( pdfFromGet() );
+			echo getOutputLink( pdfFromGet($_GET) );
 			echo getRequestForm($arrangementID, $gigID);
 			echo getFooter();
 			exit();
 		} elseif ( 'getGig'==$_GET['action']) {
-			echo getOutputLink( pdfFromGig() );
+			echo getOutputLink( pdfFromGig($_GET) );
 			echo getRequestForm($arrangementID, $gigID);
 			echo getFooter();
 			exit();

@@ -1,18 +1,18 @@
 <?php
 use \setasign\Fpdi;
 
-function pdfFromGig($dummyGigID=-1, $dummyPart=-1){
+function pdfFromGig( $input, $dummyGigID=-1, $dummyPart=-1){
     $includeMusic = false;
-if (isset($_GET['includeMusic'])){
-    if ( 'include' == $_GET['includeMusic']){
+if (isset($input['includeMusic'])){
+    if ( 'include' == $input['includeMusic']){
         $includeMusic = true;
     } 
 }    
-if (isset($_GET['gigID']) && isset($_GET['part'])){
+if (isset($input['gigID']) && isset($input['part'])){
     deleteOutput( getcwd() );
     include "saveRequest.php";
     saveRequest();    
-    return pdfFromGigExplicit($_GET['gigID'], $_GET['part'], getcwd(), $includeMusic );
+    return pdfFromGigExplicit($input['gigID'], $input['part'], getcwd(), $includeMusic );
 }
 }
 

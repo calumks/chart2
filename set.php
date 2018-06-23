@@ -10,16 +10,16 @@ $result = my_execute( $sqlCopySetList );
 }
 
 
-function postNewSetList(){
+function postNewSetList( $input=array()){
 
 $isGig = 0;    
-if (isset($_POST['isGig'])){
-	if ('isPublic'==$_POST['isGig']){
+if (isset($input['isGig'])){
+	if ('isPublic'==$input['isGig']){
 		$isGig = 1;
 	}
 }
 
-$sqlNewGig = "insert into gig (name, gigDate, isGIG) VALUES( '".$_POST['gigName'] ."', '".$_POST['gigDate']."', " . $isGig . ");";
+$sqlNewGig = "insert into gig (name, gigDate, isGIG) VALUES( '".$input['gigName'] ."', '".$input['gigDate']."', " . $isGig . ");";
 $result = my_execute( $sqlNewGig);
 
 

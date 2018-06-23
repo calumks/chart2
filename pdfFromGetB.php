@@ -1,22 +1,22 @@
 <?php
 use \setasign\Fpdi;
-function pdfFromGet(){
+function pdfFromGet( $input){
 
 $where=" OR V.efileID=-999 ";
 $partWhere=" OR V.partID=-999 ";
 $arrangeWhere=" OR V.efileID in (SELECT efileID from efile where publicationID in (SELECT publicationID from publication WHERE arrangementID IN (-999";
-if (isset($_GET['chart'])){
-   foreach ($_GET['chart'] AS $index=>$value){
+if (isset($input['chart'])){
+   foreach ($input['chart'] AS $index=>$value){
       $where .= " OR V.efileID='" . $value . "' ";
    }
 }
-if (isset($_GET['part'])){
-    foreach ($_GET['part'] AS $index=>$value){
+if (isset($input['part'])){
+    foreach ($input['part'] AS $index=>$value){
       $partWhere .= " OR P.partID='" . $value . "' ";
     }
 }
-if (isset($_GET['arrangement'])){
-    foreach ($_GET['arrangement'] AS $index=>$value){
+if (isset($input['arrangement'])){
+    foreach ($input['arrangement'] AS $index=>$value){
       $arrangeWhere .= "," .   $value;
     }
 }
@@ -35,8 +35,9 @@ $pageCount = 1;
 	$pageCount = $pageCount + 1 + $row[2] - $row[1];
 	}
 require_once('getAllNotes.php');
-getAllNotes($pdf, $_GET['arrangement']);
-
+if (isset($input['arrangement'])){
+	getAllNotes($pdf, $input['arrangement']);
+}
     	foreach( listMultiple( $sql ) AS $index=>$row ){
 	$pdf->setSourceFile("pdf/" . $row[0]);
 	for ($i = $row[1], $ii = $row[2]; $i <= $ii; $i++){

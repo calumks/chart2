@@ -32,13 +32,15 @@ return $form;
 }
 
 
-function deleteSet(){
-    
-$gigID = $_POST['gigID'];
+function deleteSet( $input=array()){
+
+if (isset($input['gigID'])){    
+$gigID = $input['gigID'];
 $sql1 = "delete from setList2 where gigID = " . $gigID . ";";
 $sql2 = "delete from gig where gigID = " . $gigID . ";";
 $result = my_execute( $sql1 );
 $result = my_execute( $sql2 );
+}
 
 }
 

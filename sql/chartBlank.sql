@@ -37,8 +37,11 @@ GRANT ALL PRIVILEGES ON *.* TO 'makeUpAUserName'@'localhost' IDENTIFIED BY 'make
 CREATE TABLE `arrangement` (
   `arrangementID` int(11) NOT NULL,
   `songID` int(11) NOT NULL,
-  `arrangerPersonID` int(11) NOT NULL
+  `arrangerPersonID` int(11) NOT NULL,
+  `isInPads` tinyint(1) NOT NULL,
+  `isBackedUp` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 
 -- --------------------------------------------------------

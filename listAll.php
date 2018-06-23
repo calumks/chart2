@@ -4,6 +4,7 @@ function listAll( $partID=''){
 
 $title = "";
 
+/*
 class myListAllPDF extends FPDF
 {
 var $col = 0;
@@ -38,7 +39,7 @@ function AcceptPageBreak()
     }
 }
 }
-
+*/
 
 $where="";
 $partWhere="";

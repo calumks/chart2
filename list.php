@@ -75,20 +75,20 @@ if ($file['error'] == UPLOAD_ERR_OK) {
 }
 
 
-function setPublication(){
+function setPublication($input = array()){
     
-  if (isset($_POST['efile']) && isset($_POST['formatID']) && strlen($_POST['efile'])>4 ){
+  if (isset($input['efile']) && isset($input['formatID']) && strlen($input['efile'])>4 ){
         
-    if (isset($_POST['publicationID']) && $_POST['publicationID'] > 0){
-        $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $_POST['efile'] . "',1,". $_POST['formatID'] . "," . $_POST['publicationID'] . ");";
+    if (isset($input['publicationID']) && $input['publicationID'] > 0){
+        $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $input['efile'] . "',1,". $input['formatID'] . "," . $input['publicationID'] . ");";
         $result = mysqli_execute(mysqli_prepare($link, $sql));
 
-    } elseif (isset($_POST['description']) && strlen($_POST['description']) > 0 && isset($_POST['songID']) && isset($_POST['arrangerPersonID'])  && $_POST['songID']>0 && $_POST['arrangerPersonID']>0 ){
-        $sql = "INSERT INTO arrangement (songID, arrangerPersonID) VALUES(". $_POST['songID'] . ",". $_POST['arrangerPersonID'] . ");";
+    } elseif (isset($input['description']) && strlen($input['description']) > 0 && isset($input['songID']) && isset($input['arrangerPersonID'])  && $input['songID']>0 && $input['arrangerPersonID']>0 ){
+        $sql = "INSERT INTO arrangement (songID, arrangerPersonID) VALUES(". $input['songID'] . ",". $input['arrangerPersonID'] . ");";
         $last_id = my_insert_id($sql);
-        $sql = "INSERT INTO publication (arrangementID, description) VALUES(". $last_id . ",'". $_POST['description'] . "');";
+        $sql = "INSERT INTO publication (arrangementID, description) VALUES(". $last_id . ",'". $input['description'] . "');";
         $last_id = my_insert_id($sql);
-        $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $_POST['efile'] . "',1,". $_POST['formatID'] . "," . $last_id . ");";
+        $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $input['efile'] . "',1,". $input['formatID'] . "," . $last_id . ");";
         $result = my_execute( $sql);
     }
   }

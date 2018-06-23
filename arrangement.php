@@ -7,7 +7,9 @@ $link  = mysqli_connect( $servername, $username, $password, $database);
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 } 
-$result = mysqli_execute(mysqli_prepare($link, $sql));
+//echo "sql: " . $sql;
+$statement = mysqli_prepare($link, $sql);
+$result = mysqli_execute($statement);
 mysqli_close($link);
 return $result;    
 }
@@ -59,14 +61,14 @@ $result = my_execute( $sqlNewSong );
 }
 }
 
-function postNewArrangement(){
+function postNewArrangement($input){
 
-$sqlNewGig = "insert into gig (name, gigDate) VALUES( '".$_POST['gigName'] ."', '".$_POST['gigDate']."');";
+$sqlNewGig = "insert into gig (name, gigDate) VALUES( '".$input['gigName'] ."', '".$input['gigDate']."');";
 $result = my_execute( $sqlNewGig );
 
-foreach ($_POST['arrangement'] as $key => $value) {
+foreach ($input['arrangement'] as $key => $value) {
     if (!""==$value){        
-        $sqlNewSetMember = "insert into setList2 (arrangementID,  gigID, setListOrder) select '" . $key . "',  t1.gigID, '". $value ."' from  gig as t1 where t1.name='" . $_POST['gigName'] . "' and t1.gigDate='".$_POST['gigDate']."' ;";
+        $sqlNewSetMember = "insert into setList2 (arrangementID,  gigID, setListOrder) select '" . $key . "',  t1.gigID, '". $value ."' from  gig as t1 where t1.name='" . $input['gigName'] . "' and t1.gigDate='".$input['gigDate']."' ;";
         
         $result = my_execute( $sqlNewSetMember );
 

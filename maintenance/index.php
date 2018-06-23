@@ -39,7 +39,7 @@ if (hasAdminCookie()){
     }
 
     if ('setPublication'==$_REQUEST['action']){
-        setPublication();
+        setPublication($_POST);
     }
 }
 
@@ -113,7 +113,7 @@ if (hasAdminCookie()){
 
 
     if ('addSetList'==$_POST['action']){
-        postNewSetList();
+        postNewSetList($_POST);
     }
 
 
@@ -126,7 +126,7 @@ if (hasAdminCookie()){
 
 
     if ('deleteSetList'==$_REQUEST['action']){
-        deleteSet();
+        deleteSet($_POST);
     }
 }
 }
