@@ -9,13 +9,13 @@ function addToCookieArray( $newValue, $expiry ){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 	}
 	$oldarray[] = $newValue;
-	setTSBcookieArray( $oldarray, $expiry );
+	self::setTSBcookieArray( $oldarray, $expiry );
 }
 
 
 function deleteCookie(){
-	setTSBcookie( "", time()-3600 );
-	setTSBcookieArray( "", time()-3600 );
+	self::setTSBcookie( "", time()-3600 );
+	self::setTSBcookieArray( "", time()-3600 );
 }
 
 
@@ -40,8 +40,25 @@ return $form;
 }
 
 
+function getIP(){
+    
+    // Get user IP address
+if ( isset($_SERVER['HTTP_CLIENT_IP']) && ! empty($_SERVER['HTTP_CLIENT_IP'])) {
+    $ip = $_SERVER['HTTP_CLIENT_IP'];
+} elseif ( isset($_SERVER['HTTP_X_FORWARDED_FOR']) && ! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+} else {
+    $ip = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
+}
+
+$ip = filter_var($ip, FILTER_VALIDATE_IP);
+$ip = ($ip === false) ? '0.0.0.0' : $ip;
+return $ip;
+}
+
+
 function getOneAdminEmail(){
-    $all = getAdminEmails();
+    $all = self::getAdminEmails();
     if (count($all) > 0){
         return $all[0]; 
     } else {
@@ -66,7 +83,7 @@ $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
 }
-$breturn = isrecognisedAdmin( $_COOKIE['tsbcode'] );
+$breturn = self::isrecognisedAdmin( $_COOKIE['tsbcode'] );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
@@ -81,7 +98,7 @@ $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
 }
-$breturn = isCookieForEmail( $_COOKIE['tsbcode'], $email );
+$breturn = self::isCookieForEmail( $_COOKIE['tsbcode'], $email );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
@@ -98,7 +115,7 @@ $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
 }
-$breturn = isrecognisedip( $_COOKIE['tsbcode'] );
+$breturn = self::isrecognisedip( $_COOKIE['tsbcode'] );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
@@ -152,8 +169,8 @@ return $breturn;
 function sendAdminDudEmail( $dudEmail ){
 	$msg = "Unrecognised email.\n  " . $dudEmail;
 	$msg = wordwrap($msg, 70);	
-	$headers = 'Reply-To: ' . getOneAdminEmail();
-	mail( getOneAdminEmail(), "TSB Chart dud email", $msg, $headers);
+	$headers = 'Reply-To: ' . self::getOneAdminEmail();
+	mail( self::getOneAdminEmail(), "TSB Chart dud email", $msg, $headers);
 }
 
 function sendCode( $email ){
@@ -165,13 +182,13 @@ $sql = "SELECT userID from user where md5email = md5(trim(upper(' " . $email . "
 	$userID = $row[0];
     }
 
-$sql = "INSERT into confirmation (userID, confirmationCode, ip) VALUES( " . $userID . ", '" . $md5now . "', '" . getIP() . "');";
+$sql = "INSERT into confirmation (userID, confirmationCode, ip) VALUES( " . $userID . ", '" . $md5now . "', '" . self::getIP() . "');";
 $result = Connection::my_execute( $sql);
 if ($result){
 	$msg = "To use the TSB chart printer please paste this address into your browser.\n  http://tsbchart.000webhostapp.com/?confirmation=" . $md5now;
 	$msg = wordwrap($msg, 70);
 	
-	$headers = 'Reply-To: ' . getOneAdminEmail(). "\r\n" . 'Cc: ' .getOneAdminEmail();
+	$headers = 'Reply-To: ' . self::getOneAdminEmail(). "\r\n" . 'Cc: ' .self::getOneAdminEmail();
 	mail( $email, "TSB Chart confirm email", $msg, $headers);
 	}
 
@@ -203,8 +220,8 @@ if ($result) {
 	$md5now = md5(time());
 	$sql = "UPDATE confirmation SET confirmationCode='EXPIRED', tsbcode = '" . $md5now . "' WHERE confirmationID = " . $confirmationID . ";";
 	$result = mysqli_query($link, $sql);
-	setTSBcookie( $md5now, time() + 365 * 24 * 60 * 60 );
-	addToCookieArray( $md5now, time() + 365 * 24 * 60 * 60 );
+	self::setTSBcookie( $md5now, time() + 365 * 24 * 60 * 60 );
+	self::addToCookieArray( $md5now, time() + 365 * 24 * 60 * 60 );
 	}
 } else {
     echo "Error: " . $sql . "<br>" . mysqli_error($link);
@@ -219,10 +236,10 @@ function storeEmail( $email = ""){
     $sql = "SELECT COUNT(*) from user where md5email = md5(trim(upper('" . $email . "')))";
     foreach(Connection::listMultiple( $sql ) AS $index=>$row ){
 		if ($row[0] > 0) {
-			sendCode( $email );
+			self::sendCode( $email );
 			return true;
 		} else {
-			sendAdminDudEmail( $email );
+			self::sendAdminDudEmail( $email );
 			return false;
 		}
     }
