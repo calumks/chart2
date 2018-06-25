@@ -634,6 +634,12 @@ return $yourFile;
 }
 
 
+function listPdf(){
+$path    = '../pdf';
+echo "<fieldset><legend>Unpaired pdfs</legend>";
+}
+
+
 function listPdfUnlisted( $path = '../pdf' ){
 
 $files = scandir($path);

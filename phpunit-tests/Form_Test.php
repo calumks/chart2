@@ -64,6 +64,10 @@ class Form_Test extends PHPUnit_Framework_TestCase
     $this->assertTrue( strlen( Arrangement::getSongs() ) >= 0 );
   }
 
+  public function test_FormList(){
+	Arrangement::listPdf();
+  }
+
 // forms with positive length (even in a blank database)
 
   public function test_Cookie(){
