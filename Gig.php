@@ -353,6 +353,20 @@ function getLatestGigID(){
 }
 
 
+function getNewSetListForm(){
+
+$form = "<fieldset><legend>New set</legend>";
+$form .= "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='addSetList' />";
+$form .= "<p>Gig name<textarea name='gigName'></textarea></p> ";
+$form .= "<p>Gig date<input type='date' name='gigDate' ></p> ";
+$form .= "<p>Performance (leave unticked if it's a practice)<input type='checkbox' name='isGig' value='isPublic' ></p> ";
+$form .= "<input type='submit' value='ADD SET'></form>";
+$form .= "</fieldset>";
+return $form;
+}
+
+
 function getSetPartsForm(){
 
 $form = "<fieldset><legend>Output parts for set</legend><form action = '' method='GET'>";
