@@ -676,6 +676,15 @@ return $unpaired2;
 }
 
 
+function newName($oldName, $countDigits){
+    $newName = preg_replace('/[^A-Za-z1-9]/u','', strip_tags($oldName));
+    for( $i = 1; $i <= $countDigits; $i++){
+        $newName .= intval(rand(0,20));
+    }
+    return $newName;
+}
+
+
 function numPages($filename){
     try {
         $pdf = new Fpdi\Fpdi();

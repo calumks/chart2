@@ -15,7 +15,8 @@ class Put_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_ReceiveFile(){
-   $file = array('error' => UPLOAD_ERR_OK, 'tmp_name' => 'afile.pdf', 'name' => 'afile.pdf');
+//   $file = array('error' => UPLOAD_ERR_OK, 'tmp_name' => 'afile.pdf', 'name' => 'afile.pdf');
+   $file = array();
 	Arrangement::receiveFile( $file );
   }
 
