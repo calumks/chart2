@@ -11,85 +11,85 @@ class Put_Test extends PHPUnit_Framework_TestCase
   }
   
   public function test_StoreEmail(){
-    $this->assertTrue( !storeEmail() );
+    $this->assertTrue( !User::storeEmail() );
   }
 
   public function test_ReceiveFile(){
-	receiveFile();
+	Arrangement::receiveFile();
   }
 
   public function test_DeleteFile(){
-	deleteFile( 'noFile.abc');
+	Arrangement::deleteFile( 'noFile.abc');
   }
 
 
   public function test_postNewPerson(){
-        postNewPerson();
+        Arrangement::postNewPerson();
 }
 
   public function test_storeNewUser(){
-                storeNewUser('dud@gmail.com','Dopey');
+                User::storeNewUser('dud@gmail.com','Dopey');
 }
 
   public function test_postNewSong(){
-        postNewSong();
+        Arrangement::postNewSong();
 }
 
 
   public function test_setPublication(){
-        setPublication();
+        Arrangement::setPublication();
 }
 
   public function test_deletePartPage(){
-            deletePartPage( 1 );
+            Arrangement::deletePartPage( 1 );
 }
 
   public function test_setPartPage(){
-            setPartPage( 1, 1, 1, 1);
+            Arrangement::setPartPage( 1, 1, 1, 1);
 }
 
   public function test_addNote(){
-            addNote(1, 'Some text');
-            updateNote(1, 'Some text');
+            Arrangement::addNote(1, 'Some text');
+            Arrangement::updateNote(1, 'Some text');
 }
 
   public function test_deleteNote(){
-            deleteNote(1);
+            Arrangement::deleteNote(1);
 }
 
   public function test_toggle(){
-            addToBackup( 1, 1 );
-            addToBackup( 1, 0 );
-            addToPads( 1, 1 );
-            addToPads( 1, 0 );
+            Arrangement::addToBackup( 1, 1 );
+            Arrangement::addToBackup( 1, 0 );
+            Arrangement::addToPads( 1, 1 );
+            Arrangement::addToPads( 1, 0 );
 }
 
   public function test_deleteSetListPart(){
-            deleteSetListPart(1);
+            Gig::deleteSetListPart(1);
 }
 
   public function test_addToSet(){
-            addToSet(1, 10, 1);
+            Gig::addToSet(1, 10, 1);
 }
 
   public function test_postNewSetList(){
 	$_in = array('isGig'=>'isPublic','gigName'=>'A good name','gigDate'=>'2018');
-        postNewSetList($_in);
+        Gig::postNewSetList($_in);
 }
 
   public function test_copySetList(){
-            copySetList( 1, 2);
+            Gig::copySetList( 1, 2);
 }
 
   public function test_deleteSet(){
-        deleteSet();
+        Gig::deleteSet();
 	$_in = array('gigID'=>1);
-        deleteSet($_in);
+        Gig::deleteSet($_in);
 }
 
   public function test_SetCookie(){
 //	deleteCookie(); Can't test -- it sets cookies
-    $this->assertTrue( !setValidCookie( 'dudCode' ) );
+    $this->assertTrue( !User::setValidCookie( 'dudCode' ) );
   }
 
 

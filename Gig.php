@@ -5,6 +5,26 @@ use \setasign\Fpdi;
 class Gig{
 
 
+function addToSet( $gigID, $order, $arrangementID){
+    
+    if ($arrangementID > 0 && $gigID > 0){
+        $sql = "INSERT INTO setList2 (arrangementID, gigID, setListOrder) VALUES('". $arrangementID . "',". $gigID . "," . $order . ");";
+        $result = Connection::my_execute( $sql );
+}
+ 
+}
+
+function copySetList( $sourceGigID, $targetGigID){
+
+$sqlDeleteSetList = "DELETE FROM setList2 WHERE gigID = " . $targetGigID;
+$result = Connection::my_execute( $sqlDeleteSetList);
+$sqlCopySetList = "INSERT INTO setList2(arrangementID,  gigID, setListOrder) SELECT arrangementID,  " . $targetGigID . ", setListOrder FROM setList2 WHERE gigID = " . $sourceGigID;
+$result = Connection::my_execute( $sqlCopySetList );
+
+}
+
+
+
 function deleteOutput( $directoryBase ){
 $files = glob($directoryBase . '/output/*'); // get all file names
 foreach($files as $file){ // iterate files
@@ -12,6 +32,29 @@ foreach($files as $file){ // iterate files
     unlink($file); // delete file
 }
 } 
+
+
+
+function deleteSet( $input=array()){
+
+if (isset($input['gigID'])){    
+$gigID = $input['gigID'];
+$sql1 = "delete from setList2 where gigID = " . $gigID . ";";
+$sql2 = "delete from gig where gigID = " . $gigID . ";";
+$result = Connection::my_execute( $sql1 );
+$result = Connection::my_execute( $sql2 );
+}
+
+}
+
+
+function deleteSetListPart( $setListID){
+    
+        $sql = "DELETE FROM  setList2 where setListID = ". $setListID . ";";
+        $result = Connection::my_execute( $sql );
+ 
+}
+
 
 function getChartsForGig( $gigID = -1){
     $return = "";
@@ -31,6 +74,93 @@ function getChartsForGig( $gigID = -1){
     $return .= "</ol>";
     return $return;
 }
+
+
+function getCopySetForm(){
+
+$sqlCountTargets = "SELECT COUNT(*) FROM (SELECT gig.gigID, COALESCE(S.countCharts,0) AS counter FROM gig LEFT JOIN (SELECT COUNT(*) as countCharts, gigID from setList2 GROUP BY gigID) AS S ON S.gigID=gig.gigID WHERE COALESCE(S.countCharts,0)=0) AS C";
+    	foreach( Connection::listMultiple( $sqlCountTargets ) AS $index=>$row ){
+        	$counter = $row[0];
+    	}
+
+if (0 == $counter) return "";
+
+$form = "<fieldset><legend>Copy set</legend><form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='copySetList' />";
+$form .= "<p>Source <select name='sourceGigID'>";
+
+$sqlSource = "SELECT gig.gigID, gig.name, gig.gigDate FROM gig LEFT JOIN (SELECT COUNT(*) as countCharts, gigID from setList2 GROUP BY gigID) AS S ON S.gigID=gig.gigID WHERE COALESCE(S.countCharts,0)>0 ORDER BY gigDate DESC, name ASC";
+	foreach( Connection::listMultiple( $sqlSource ) AS $index=>$row ){
+        	$check = "<option value=" . $row[0] . ">" . $row[1] . " " . $row[2] . "";
+        	$form = $form . $check;
+    	}
+$form .= "</select>";
+$form .= "<p>Target <select name='targetGigID'>";
+$sqlTarget = "SELECT gig.gigID, gig.name, gig.gigDate FROM gig LEFT JOIN (SELECT COUNT(*) as countCharts, gigID from setList2 GROUP BY gigID) AS S ON S.gigID=gig.gigID WHERE COALESCE(S.countCharts,0)=0 ORDER BY gigDate DESC, name ASC";
+	foreach( Connection::listMultiple( $sqlTarget ) AS $index=>$row ){
+        		$check = "<option value=" . $row[0] . ">" . $row[1] . " " . $row[2] . "";
+        		$form = $form . $check;
+    	}
+$form .= "</select>";
+$form .= "</p><p><input type='submit' value='COPY SET'></p></form></fieldset>";
+return $form;
+
+}
+
+
+
+
+
+function getDeleteSetForm(){
+
+$form = "<fieldset><legend>Delete set</legend><form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='deleteSetList' />";
+$form .= "<p><select name='gigID'>";
+
+$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
+	$i = 1;
+    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	    if(11!=$row[0]){
+        		$check = "<p><option value=" . $row[0] . ">" . $row[1] . " " . $row[2] . "</p>";
+        		$form = $form . $check;
+    	    }
+    	}
+
+$form .= "</p><p><input type='submit' value='DELETE SET'></p></form></fieldset>";
+$sql = "SELECT name, countPlays from view_popular";
+	$form .= "<fieldset><legend>Appearances in set lists</legend>";
+        $form .= "<table>";
+        $form .= "<tr><th>Song</th><th>Appearances</th></tr>";
+    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+        	$tr = "<tr><td>" . $row[0] . "</td><td>" . $row[1] . "</td></tr>";
+        	$form = $form . $tr;
+    	}
+        $form .= "</table>";
+	$form .= "</fieldset>";
+return $form;
+}
+
+
+
+function getEditSetForm(){
+
+$form = "<fieldset><legend>Get set to edit</legend><form action = '' method='GET'>";
+$form .= "<input type='hidden' name='action' value='getSetList' />";
+$form .= "<p><select name='gigID'>";
+
+$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
+	$i = 1;
+    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	    if(11!=$row[0]){
+        		$check = "<p><option value=" . $row[0] . ">" . $row[1] . " " . $row[2] . "</p>";
+        		$form = $form . $check;
+    	    }
+    	}
+
+$form .= "</p><p><input type='submit' value='Get setlist'></p></form></fieldset>";
+return $form;
+}
+
 
 
 function getForm( $gigID ){
@@ -152,6 +282,69 @@ function getGigLabel( $gigID){
 
 }
 
+
+function getGigSetForm($gigID){
+ 
+    $lastOrder = -999;
+    $gigLabel = "";
+    foreach (Connection::listMultiple("SELECT G.name, G.gigDate FROM gig as G WHERE  G.gigID = " . $gigID . "")  as $key=>$song){
+        $gigLabel = $song[0] . " " . $song[1];
+    }   
+    $return = "";
+    $return .= "<fieldset><legend>Edit set list for " . $gigLabel . "</legend>";
+    $return .= "<div><table>";
+    $return .= "<tr><th>Song<th> </tr>";
+    $order = 999;
+    foreach (Connection::listMultiple("SELECT T.setListID, T.setListOrder, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName)  FROM setList2 AS T, view_arrangement AS V WHERE T.arrangementID = V.arrangementID AND T.gigID = " . $gigID . " order by T.setListOrder ASC")  as $key=>$song){
+        $order = $song[1];
+        $midOrder = 0.5 * ($lastOrder + $order);
+        $lastOrder = $order;
+        $return .= "<tr><td>";
+        $return .= "<form action='' method='POST'>";
+        $return .= "<input type='hidden' name='action' value='addSetListPart'>";
+        $return .= "<input type='hidden' name='gigID' value='" . $gigID . "'>";
+        $return .= "<input type='hidden' name='setListOrder' value='" . $midOrder . "'>";
+        $return .= "<select name='arrangementID'>";
+        $return .= "<option value='" . -1 . "'>" . "" . "</option>";
+        foreach (Connection::listMultiple("SELECT V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName)  FROM view_arrangement AS V  order by V.name  ASC")  as $keyy=>$songg){
+            $return .= "<option value='" . $songg[0] . "'>" . $songg[1] . "</option>";
+        }
+        $return .= "</select>";
+        $return .= "<input type='submit' value='INSERT'>";
+        $return .= "</form>";
+        $return .= "</td></tr>";
+        $return .= "<tr>";
+        $return .= "<td>";
+        $return .= "<form action='' method='POST'>";
+        $return .= "<input type='hidden' name='action' value='deleteSetListPart'>";
+        $return .= "<input type='hidden' name='setListID' value='" . $song[0] . "'>";
+        $return .= "<input type='submit' value='(DELETE) " . $song[2] . "'>";
+        $return .= "</form>";
+        $return .= "</td>";
+        $return .= "</tr>";
+
+    }
+        $lastOrder = $order + 10;
+        $return .= "<tr><td>";
+        $return .= "<form action='' method='POST'>";
+        $return .= "<input type='hidden' name='action' value='addSetListPart'>";
+        $return .= "<input type='hidden' name='gigID' value='" . $gigID . "'>";
+        $return .= "<input type='hidden' name='setListOrder' value='" . $lastOrder . "'>";
+        $return .= "<select name='arrangementID'>";
+        $return .= "<option value='" . -1 . "'>" . "" . "</option>";
+        foreach (Connection::listMultiple("SELECT V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName)  FROM view_arrangement AS V  order by V.name  ASC")  as $key=>$song){
+            $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
+        }
+        $return .= "</select>";
+        $return .= "<input type='submit' value='INSERT'>";
+        $return .= "</form>";
+        $return .= "</td></tr>";
+    $return .= "</table></div>";
+    $return .= "</fieldset>";
+    return $return;
+}
+
+
 function getLatestGigID(){
     foreach (Connection::listMultiple("SELECT gigID from gig ORDER BY gigDate DESC LIMIT 1") AS $count=>$res){
         return $res[0];
@@ -159,6 +352,35 @@ function getLatestGigID(){
 
 }
 
+
+function getSetPartsForm(){
+
+$form = "<fieldset><legend>Output parts for set</legend><form action = '' method='GET'>";
+$form .= "<input type='hidden' name='action' value='getPartsForSet' />";
+$form .= "<p><select name='gigID'>";
+
+$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
+	$i = 1;
+    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	    if(11!=$row[0]){
+        		$check = "<p><option value=" . $row[0] . ">" . $row[1] . " " . $row[2] . "</p>";
+        		$form = $form . $check;
+    	    }
+    	}
+$form .= "</p><p><input type='submit' value='Get parts (output to output folder)'></p></form></fieldset>";
+return $form;
+}
+
+
+function getSetPartsOutput( $gigID, $directoryBase ){
+
+$sql = "SELECT DISTINCT partName from view_efilePartSetList2 where gigID = " . $gigID . " ORDER BY partName ASC ";
+    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+        		self::pdfFromGigExplicit($gigID, $row[0], $directoryBase, "Gig" . $gigID . $row[0] );
+        		echo $row[0] . " ";
+    	}
+
+}
 
 
 function pdfFromGig( $input, $dummyGigID=-1, $dummyPart=-1){
@@ -253,5 +475,19 @@ return $yourFile;
 }
 
 
+function postNewSetList( $input=array()){
+
+$isGig = 0;    
+if (isset($input['isGig'])){
+	if ('isPublic'==$input['isGig']){
+		$isGig = 1;
+	}
+}
+
+$sqlNewGig = "insert into gig (name, gigDate, isGIG) VALUES( '".$input['gigName'] ."', '".$input['gigDate']."', " . $isGig . ");";
+$result = Connection::my_execute( $sqlNewGig);
+
+
+}
 
 } // end class Gig

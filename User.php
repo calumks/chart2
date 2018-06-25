@@ -67,6 +67,20 @@ function getOneAdminEmail(){
 }
 
 
+function getNewUserForm(){
+
+$form = "";
+$form .= "<fieldset><legend>New user</legend>";
+$form .= "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='addNewUser' />";
+$form .= "<p>Nickname<textarea name='newNickName'></textarea></p> ";
+$form .= "<p>Email<input type='email' name='newEmail'></p> ";
+$form .= "<input type='submit' value='Add new user'></form>";
+$form .= "</fieldset>";
+return $form;
+}
+
+
 function getUserFromTsbcode( $tsbcode ){
 $sql = "SELECT userid FROM confirmation where tsbcode = '" . $tsbcode ."' LIMIT 1;";
 $ret = -1; // if nothing found

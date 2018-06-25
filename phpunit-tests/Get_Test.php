@@ -12,26 +12,26 @@ class Get_Test extends PHPUnit_Framework_TestCase
   
 
   public function test_getOutputLink(){
-	getOutputLink( listAll(1) );
+	Render::getOutputLink( Arrangement::listAll(1) );
   }
 
   public function test_listAll(){
-	 listAll(1);
+	 Arrangement::listAll(1);
   }
 
   public function test_pdfFromGet(){
 	$in = array();
-	getOutputLink( pdfFromGet($in) );
+	Render::getOutputLink( Arrangement::pdfFromGet($in) );
 	$in['arrangement'] = array(1);
-	getOutputLink( pdfFromGet($in) );
+	Render::getOutputLink( Arrangement::pdfFromGet($in) );
   }
 
   public function test_pdfFromGig(){
 	$in = array();
-	getOutputLink( pdfFromGig($in) );
+	Render::getOutputLink( Gig::pdfFromGig($in) );
 	$in['gigID'] = 1;
 	$in['partID'] = 1;
-	getOutputLink( pdfFromGig($in) );
+	Render::getOutputLink( Gig::pdfFromGig($in) );
   }
 
 
