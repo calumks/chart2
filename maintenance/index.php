@@ -217,7 +217,7 @@ if (isset($_GET['action'])){
         echo Arrangement::getSongs();
         echo Arrangement::getNewPersonForm();
         echo Arrangement::getPeople();
-        echo Arrangement::getNewUserForm();
+        echo User::getNewUserForm();
     }
     
     

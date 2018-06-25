@@ -779,7 +779,7 @@ if ($file['error'] == UPLOAD_ERR_OK) {
         // basename() may prevent filesystem traversal attacks;
         // further validation/sanitation of the filename may be appropriate
     $name = basename($file['name']);
-    $newName = newName($name,10) . ".pdf";
+    $newName = self::newName($name,10) . ".pdf";
     if(mime_content_type($file['tmp_name']) == "application/pdf" && !file_exists(SITE_ROOT . "/$uploads_dir/$newName")){
         move_uploaded_file($tmp_name, SITE_ROOT . "/$uploads_dir/$newName");
         return true;

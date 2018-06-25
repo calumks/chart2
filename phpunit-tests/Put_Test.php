@@ -15,7 +15,8 @@ class Put_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_ReceiveFile(){
-	Arrangement::receiveFile();
+   $file = array('error' => UPLOAD_ERR_OK, 'tmp_name' => 'afile.pdf', 'name' => 'afile.pdf');
+	Arrangement::receiveFile( $file );
   }
 
   public function test_DeleteFile(){
