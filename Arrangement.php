@@ -279,6 +279,18 @@ return $form;
 }
 
 
+function getNewPersonForm(){
+
+$form = "<form action = '' method='POST'>";
+$form .= "<input type='hidden' name='action' value='addPerson' />";
+$form .= "<p>First name<textarea name='firstName'></textarea></p> ";
+$form .= "<p>Last name<textarea name='lastName'></textarea></p> ";
+$form .= "<p>Nickname<textarea name='nickName'></textarea></p> ";
+$form .= "<input type='submit' value='Add'></form>";
+return $form;
+}
+
+
 function getNewSongForm(){
 
 $form = "<form action = '' method='POST'>";
