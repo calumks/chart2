@@ -83,14 +83,15 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }  
 
   public function test_indexFormLength(){
+    $this->assertTrue( strlen( User::getNewUserForm() ) > 10 );
     $this->assertTrue( strlen( User::getEmailForm() ) > 10 );
     $this->assertTrue( strlen( Render::getFooter() ) > 10 );
-    $this->assertTrue( strlen( Render::getOutputLink('dummy') ) > 10 );
-    $this->assertTrue( strlen( Arrangement::getNewSongForm() ) > 10 );
-    $this->assertTrue( strlen( User::getNewUserForm() ) > 10 );
-    $this->assertTrue( strlen( Arrangement::getNewSongForm() ) > 10 );
     $this->assertTrue( strlen( Render::getRequestForm() ) > 10 );    // FPDF
+    $this->assertTrue( strlen( Render::getOutputLink('dummy') ) > 10 );
+    $this->assertTrue( strlen( Arrangement::getNewPersonForm() ) > 10 );
+    $this->assertTrue( strlen( Arrangement::getNewSongForm() ) > 10 );
     $this->assertTrue( strlen( Arrangement::getUploadFileForm() ) > 10 );
+    $this->assertTrue( strlen( Arrangement::getNewSongForm() ) > 10 );
   }  
 
 }
