@@ -650,32 +650,48 @@ return $yourFile;
 }
 
 
-function listPdf(){
-$path    = '../pdf';
-echo "<fieldset><legend>Unpaired pdfs</legend>";
+function listPdf( $path = '../pdf' ){
+$echo =  "<fieldset><legend>Unpaired pdfs</legend>";
+
+foreach ($this->listPdfUnlisted( $path ) as $key=>$filename){
+    $echo .= "<p><a href='" . $path . "/" . $filename . "'>" . $filename . "</a> " . $this->numPages($path . "/" . $filename) . "\n\n";
+    $echo .=  "<form action='' method='post'>";
+    $echo .=  "<input type='submit' value='delete " . $filename . "' ><input type='hidden' name='action' value='deletePDF'>";
+    $echo .=  "<input type='hidden' name='fileNameExclPath' value='" . $filename . "'>";
+    $echo .=  "</form></p>";
+    
+}
+$echo .=  "</fieldset>";
+return $echo;
 }
 
 
 function listPdfUnlisted( $path = '../pdf' ){
 
 $files = scandir($path);
+//echo "<pre>Files1" . print_r($files,1) . "</pre>";
 $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
+//echo "<pre>Files2" . print_r($files,1) . "</pre>";
 $sql = "SELECT name from efile";
 $pairedFiles = array();
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
     	$pairedFiles[] = $row[0];
     	}
 
+//echo "<pre>pairedFiles2" . print_r($pairedFiles,1) . "</pre>";
 
 $unpaired = array_diff($files, $pairedFiles);
+//echo "<pre>unpairedFiles1" . print_r($unpaired,1) . "</pre>";
 $unpaired2 = array();
 foreach ($unpaired as $key=>$filename){
+//    echo $this->numPages($path . "/" . $filename);
     if ($this->numPages($path . "/" . $filename) > 0){
         $unpaired2[] = $filename;
     }
 }
 asort($unpaired2);
+//echo "<pre>unpaired2" . print_r($unpaired2,1) . "</pre>";
 return $unpaired2;    
 }
 

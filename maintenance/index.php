@@ -193,7 +193,7 @@ if (isset($_GET['action'])){
     }
 
     if ('listPdf'==$_GET['action']){
-        $arrangement->listPdf();
+        echo $arrangement->listPdf();
         echo $arrangement->getPublicationForm();
         echo $arrangement->getUploadFileForm();
     }
