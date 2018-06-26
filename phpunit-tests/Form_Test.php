@@ -30,6 +30,10 @@ class Form_Test extends PHPUnit_Framework_TestCase
     $this->assertTrue( strlen( $this->g->getCopySetForm() ) >= 0 );
   }
 
+  public function test_sendCode(){
+     $this->u->sendCode("abc@def");
+  }
+
   public function test_FormEfileForm(){
     $this->assertTrue( strlen( $this->a->getEfileForm() ) >= 0 );
   }
