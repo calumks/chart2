@@ -81,7 +81,7 @@ function setPublication($input = array()){
         
     if (isset($input['publicationID']) && $input['publicationID'] > 0){
         $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $input['efile'] . "',1,". $input['formatID'] . "," . $input['publicationID'] . ");";
-        $result = mysqli_execute(mysqli_prepare($link, $sql));
+        $result = my_execute($sql);
 
     } elseif (isset($input['description']) && strlen($input['description']) > 0 && isset($input['songID']) && isset($input['arrangerPersonID'])  && $input['songID']>0 && $input['arrangerPersonID']>0 ){
         $sql = "INSERT INTO arrangement (songID, arrangerPersonID) VALUES(". $input['songID'] . ",". $input['arrangerPersonID'] . ");";

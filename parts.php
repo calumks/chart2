@@ -86,6 +86,7 @@ function getEfileForm( $publicationID = -1){
 
 function getPartForm($efileID){
  
+	$fname = "";
     foreach (listMultiple("SELECT E.name AS Ename  FROM efile as E WHERE  E.efileID = " . $efileID . "")  as $key=>$song){
         $fname = $song[0];
     }   
@@ -93,9 +94,9 @@ function getPartForm($efileID){
     $return .= "<fieldset><legend>Delete part/page pairs</legend>";
     $return .= "<div><table>";
     $return .= "<tr><th>Part<th>Start Page<th>End Page<th>Efile</tr>";
-    $fname = "";
+//    $fname = "";
     foreach (listMultiple("SELECT X.efilePartID, X.startPage, X.endPage, P.name, E.name AS Ename  FROM efilePart as X, part as P, efile as E WHERE  X.partID=P.partID and X.efileID = E.efileID  and E.efileID = " . $efileID . " order by X.startPage  ASC")  as $key=>$song){
-        $fname = $song[4];
+ //       $fname = $song[4];
         $return .= "<tr>";
         $return .= "<td>" . $song[3] . "</td>";
         $return .= "<td>" . $song[1] . "</td>";
