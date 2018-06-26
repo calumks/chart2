@@ -6,127 +6,132 @@
 // authenticate user.  Valid cookie or no valid cookie
 // if valid cookie, provide content
 // if no valid cookie, go to main menu
-include_once "../include_refsB.php";
+include_once "../include_refsC.php";
+$user = new User();
+$render = new Render();
+$arrangement = new Arrangement();
+$gig = new Gig();
+
 if ($_POST){
-if (hasValidCookie()){
+if ($user->hasValidCookie()){
 if (isset($_POST['action'])){
 
-if (hasAdminCookie()){
+if ($user->hasAdminCookie()){
     if ('uploadPDF'==$_POST['action']){
     	if (isset($_FILES['myUpload'])){
-        	receiveFile( $_FILES['myUpload']);
+        	$arrangement->receiveFile( $_FILES['myUpload']);
 	}
     }
 
     if ('deletePDF'==$_POST['action'] && isset( $_POST['fileNameExclPath'])){
-        deleteFile($_POST['fileNameExclPath']);
+        $arrangement->deleteFile($_POST['fileNameExclPath']);
     }
 
     if ('addPerson'==$_POST['action']){
-        postNewPerson($_POST);
+        $arrangement->postNewPerson($_POST);
     }
 
     if ('addNewUser'==$_POST['action']){
         if (isset($_POST['newEmail']) && isset($_POST['newNickName'])){
             if (strlen($_POST['newNickName']) > 3){
-                storeNewUser($_POST['newEmail'],$_POST['newNickName']);
+                $user->storeNewUser($_POST['newEmail'],$_POST['newNickName']);
             }
         }
     }
     
     if ('addSong'==$_POST['action']){
-        postNewSong($_POST);
+        $arrangement->postNewSong($_POST);
     }
 
     if ('setPublication'==$_REQUEST['action']){
-        setPublication($_POST);
+        $arrangement->setPublication($_POST);
     }
 }
 
     if ('deleteEfilePart'==$_POST['action']){
         if(isset( $_POST['efilePartID']) ){
-            deletePartPage( $_POST['efilePartID'] );
+            $arrangement->deletePartPage( $_POST['efilePartID'] );
         }
     }
 
     if ('addEfilePart'==$_POST['action']){
         if(isset( $_POST['efileID']) && isset($_POST['partID']) && isset($_POST['startPage']) && isset($_POST['endPage'])){
-            setPartPage( $_POST['efileID'], $_POST['partID'], $_POST['startPage'], $_POST['endPage']);
+            $arrangement->setPartPage( $_POST['efileID'], $_POST['partID'], $_POST['startPage'], $_POST['endPage']);
         }
     }
 
     if ('addNote'==$_POST['action']){
         if(isset( $_POST['noteText'])  && isset( $_POST['publicationID'])){
-            addNote($_POST['publicationID'], $_POST['noteText']);
+            $arrangement->addNote($_POST['publicationID'], $_POST['noteText']);
         }
     }
 
     if ('deleteNote'==$_POST['action']){
         if( isset( $_POST['noteID'])){
-            deleteNote($_POST['noteID']);
+            $arrangement->deleteNote($_POST['noteID']);
         }
     }
 
     if ('updateNote'==$_POST['action']){
         if(isset( $_POST['noteText'])  && isset( $_POST['noteID'])){
-            updateNote($_POST['noteID'], $_POST['noteText']);
+            $arrangement->updateNote($_POST['noteID'], $_POST['noteText']);
         }
     }
 
 
     if ('addToBackup'==$_POST['action']){
         if(isset( $_POST['arrangementID']) ){
-            addToBackup( $_POST['arrangementID'], 1 );
+            $arrangement->addToBackup( $_POST['arrangementID'], 1 );
         }
     }
 
     if ('removeFromBackup'==$_POST['action']){
         if(isset( $_POST['arrangementID']) ){
-            addToBackup( $_POST['arrangementID'], 0 );
+            $arrangement->addToBackup( $_POST['arrangementID'], 0 );
         }
     }
 
 
     if ('addToPads'==$_POST['action']){
         if(isset( $_POST['arrangementID']) ){
-            addToPads( $_POST['arrangementID'], 1 );
+            $arrangement->addToPads( $_POST['arrangementID'], 1 );
         }
     }
 
     if ('removeFromPads'==$_POST['action']){
         if(isset( $_POST['arrangementID']) ){
-            addToPads( $_POST['arrangementID'], 0 );
+            $arrangement->addToPads( $_POST['arrangementID'], 0 );
         }
     }
 
     if(isset( $_POST['action']) && 'deleteSetListPart'==$_POST['action']){
         if(isset( $_POST['setListID'])) {
-            deleteSetListPart($_POST['setListID']);
+            $gig->deleteSetListPart($_POST['setListID']);
         }
     }
 
     if(isset( $_POST['action']) && 'addSetListPart'==$_POST['action']){
         if(isset( $_POST['gigID'])) {
-            addToSet($_POST['gigID'], $_POST['setListOrder'], $_POST['arrangementID']);
+            $gig->addToSet($_POST['gigID'], $_POST['setListOrder'], $_POST['arrangementID']);
         }
     }
 
 
     if ('addSetList'==$_POST['action']){
-        postNewSetList($_POST);
+        $gig->postNewSetList($_POST);
     }
 
 
     if ('copySetList'==$_POST['action']){
         if (isset($_POST['sourceGigID']) && isset($_POST['targetGigID'])){
-            copySetList( $_POST['sourceGigID'], $_POST['targetGigID']);
+            $gig->copySetList( $_POST['sourceGigID'], $_POST['targetGigID']);
         }
     }
 
 
 
     if ('deleteSetList'==$_REQUEST['action']){
-        deleteSet($_POST);
+        $gig->deleteSet($_POST);
     }
 }
 }
@@ -146,12 +151,12 @@ exit();
 // authenticate user.  Valid cookie or no valid cookie
 // if valid cookie, provide content
 // if no valid cookie, go to main menu
-include_once "../include_refsB.php";
-if (hasValidCookie()){
+//include_once "../include_refsB.php";
+if ($user->hasValidCookie()){
 echo "<p><a href='../'>Main menu</a></p>";
 echo "<p><a href='./?action=getNewSetListForm'>Edit set</a></p>";
 echo "<p><a href='./?action=getNotes'>Edit notes</a></p>";
-if (hasAdminCookie()){
+if ($user->hasAdminCookie()){
 echo "<p><a href='./?action=getParts'>Assign parts</a></p>";
 echo "<p><a href='./?action=listPdf'>Add pdf</a></p>";
 echo "<p><a href='./?action=getNewPersonForm'>Add song/person</a></p>";
@@ -160,64 +165,64 @@ echo "<p><a href='./?action=getNewPersonForm'>Add song/person</a></p>";
 if (isset($_GET['action'])){
     if ('getParts'==$_GET['action']){
         if (isset($_GET['publicationID'])){
-            echo getEFileForm($_GET['publicationID']);
+            echo $arrangement->getEFileForm($_GET['publicationID']);
         } else {
-            echo getEFileForm();
+            echo $arrangement->getEFileForm();
         }    
     }
 
     if ('getPartsForSet'==$_GET['action']){
         if (isset($_GET['gigID'])){
-            getSetPartsOutput( $_GET['gigID'], dirname(getcwd()));
+            $gig->getSetPartsOutput( $_GET['gigID'], dirname(getcwd()));
             echo "<a href='../output/'>Output directory</a>";
 
         }
     }
 
     if ('getNotes'==$_GET['action']){
-        echo getNewNoteForm();
-        echo getEditNoteForm();
+        echo $arrangement->getNewNoteForm();
+        echo $arrangement->getEditNoteForm();
         
     }
 
     if ('getEfileParts'==$_GET['action']){
         if (isset($_GET['efileID']) && $_GET['efileID'] > 0){
-            echo getPartForm($_GET['efileID']);
+            echo $arrangement->getPartForm($_GET['efileID']);
         }
-        echo getEFileForm();
+        echo $arrangement->getEFileForm();
     }
 
     if ('listPdf'==$_GET['action']){
-        listPdf();
-        echo getPublicationForm();
-        echo getUploadFileForm();
+        $arrangement->listPdf();
+        echo $arrangement->getPublicationForm();
+        echo $arrangement->getUploadFileForm();
     }
 
     if ('getSetList'==$_GET['action']){
         if (isset($_REQUEST['gigID']) && $_REQUEST['gigID'] > 0){
-            echo getGigSetForm($_REQUEST['gigID']);
+            echo $gig->getGigSetForm($_REQUEST['gigID']);
         }
-        echo getEditSetForm();
-        echo getSetPartsForm();
-        echo getCopySetForm();
-        echo getNewSetListForm();
-        echo getDeleteSetForm();
+        echo $gig->getEditSetForm();
+        echo $gig->getSetPartsForm();
+        echo $gig->getCopySetForm();
+        echo $gig->getNewSetListForm();
+        echo $gig->getDeleteSetForm();
     }
 
     if ('getNewSetListForm'==$_GET['action']){
-        echo getEditSetForm();
-        echo getSetPartsForm();
-        echo getCopySetForm();
-        echo getNewSetListForm();
-        echo getDeleteSetForm();
+        echo $gig->getEditSetForm();
+        echo $gig->getSetPartsForm();
+        echo $gig->getCopySetForm();
+        echo $gig->getNewSetListForm();
+        echo $gig->getDeleteSetForm();
     }
 
     if ('getNewPersonForm'==$_GET['action']){
-        echo getNewSongForm();
-        echo getSongs();
-        echo getNewPersonForm();
-        echo getPeople();
-        echo getNewUserForm();
+        echo $arrangement->getNewSongForm();
+        echo $arrangement->getSongs();
+        echo $arrangement->getNewPersonForm();
+        echo $arrangement->getPeople();
+        echo $user->getNewUserForm();
     }
     
     

@@ -3,8 +3,18 @@
 class Form_Test extends PHPUnit_Framework_TestCase
 {
   private $debug = false;
-  
+  private $g;
+  private $a;
+  private $u;
+  private $r;
+
+
   public function setup(){
+	$this->a = new Arrangement();
+	$this->g = new Gig();
+	$this->r = new Render();
+	$this->u = new User();
+
   }
 
   public function tearDown(){
@@ -13,80 +23,93 @@ class Form_Test extends PHPUnit_Framework_TestCase
 // forms with probably zero length in a blank database
 
   public function test_FormDeleteSetForm(){
-    $this->assertTrue( strlen( getDeleteSetForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->g->getDeleteSetForm() ) >= 0 );
   }
 
   public function test_FormCopySetForm(){
-    $this->assertTrue( strlen( getCopySetForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->g->getCopySetForm() ) >= 0 );
+  }
+
+  public function test_sendCode(){
+     $this->u->sendCode("abc@def");
   }
 
   public function test_FormEfileForm(){
-    $this->assertTrue( strlen( getEfileForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->a->getEfileForm() ) >= 0 );
   }
 
   public function test_FormEditNoteForm(){
-    $this->assertTrue( strlen( getEditNoteForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->a->getEditNoteForm() ) >= 0 );
   }
 
   public function test_FormEditSetForm(){
-    $this->assertTrue( strlen( getEditSetForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->g->getEditSetForm() ) >= 0 );
   }
 
   public function test_FormGigSetForm(){
-    $this->assertTrue( strlen( getGigSetForm( 1 ) ) >= 0 );
+    $this->assertTrue( strlen( $this->g->getGigSetForm( 1 ) ) >= 0 );
   }
 
   public function test_FormNewNoteForm(){
-    $this->assertTrue( strlen( getNewNoteForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->a->getNewNoteForm() ) >= 0 );
   }
 
   public function test_FormPartFormNOTRUN(){
-    $this->assertTrue( strlen( getPartForm(1) ) >= 0 ); /// DEPENDS on FPDF
+    $this->assertTrue( strlen( $this->a->getPartForm(1) ) >= 0 ); /// DEPENDS on FPDF
   }
 
   public function test_FormPeople(){
-    $this->assertTrue( strlen( getPeople() ) >= 0 );
+    $this->assertTrue( strlen( $this->a->getPeople() ) >= 0 );
   }
 
   public function test_FormPublicationFormNOTRUN(){
-    $this->assertTrue( strlen( getPublicationForm( 'pdf' ) ) >= 0 );   /// DEPENDS ON FPDF
+    $this->assertTrue( strlen( $this->a->getPublicationForm( 'pdf' ) ) >= 0 );   /// DEPENDS ON FPDF
   }
 
   public function test_FormSetParts(){
-    $this->assertTrue( strlen( getSetPartsForm() ) >= 0 );
+    $this->assertTrue( strlen( $this->g->getSetPartsForm() ) >= 0 );
   }
 
   public function test_FormSetPartsOutput(){
-    $this->assertTrue( strlen( getSetPartsOutput( 1, 'dummy') ) >= 0 );
+    $this->assertTrue( strlen( $this->g->getSetPartsOutput( 1, 'dummy') ) >= 0 );
   }
 
   public function test_FormGetSongs(){
-    $this->assertTrue( strlen( getSongs() ) >= 0 );
+    $this->assertTrue( strlen( $this->a->getSongs() ) >= 0 );
+  }
+
+  public function test_FormList(){
+	$this->a->listPdf();
   }
 
 // forms with positive length (even in a blank database)
 
   public function test_Cookie(){
-    $this->assertTrue( !hasValidCookie() );
+    $this->assertTrue( !$this->u->hasValidCookie() );
   }
 
   public function test_CookieAdmin(){
-    $this->assertTrue( !hasAdminCookie() );
+    $this->assertTrue( !$this->u->hasAdminCookie() );
   }
 
   public function test_List(){
-    $this->assertTrue( strlen( getOutputLink(listAll(-1))) > 10	);
+    $this->assertTrue( strlen( $this->r->getOutputLink($this->a->listAll(-1))) > 10	);
   }  
 
+  public function test_getRequestForm(){
+    $this->assertTrue( strlen( $this->r->getRequestForm(1,1) ) > 10 );    // FPDF
+  }
+
   public function test_indexFormLength(){
-    $this->assertTrue( strlen( getEmailForm() ) > 10 );
-    $this->assertTrue( strlen( getFooter() ) > 10 );
-    $this->assertTrue( strlen( getOutputLink('dummy') ) > 10 );
-    $this->assertTrue( strlen( getNewSongForm() ) > 10 );
-    $this->assertTrue( strlen( getNewUserForm() ) > 10 );
-    $this->assertTrue( strlen( getNewSongForm() ) > 10 );
-    $this->assertTrue( strlen( getRequestForm() ) > 10 );    // FPDF
-    $this->assertTrue( strlen( getUploadFileForm() ) > 10 );
+    $this->assertTrue( strlen( $this->u->getNewUserForm() ) > 10 );
+    $this->assertTrue( strlen( $this->u->getEmailForm() ) > 10 );
+    $this->assertTrue( strlen( $this->r->getFooter() ) > 10 );
+    $this->assertTrue( strlen( $this->r->getRequestForm() ) > 10 );    // FPDF
+    $this->assertTrue( strlen( $this->r->getOutputLink('dummy') ) > 10 );
+    $this->assertTrue( strlen( $this->a->getNewPersonForm() ) > 10 );
+    $this->assertTrue( strlen( $this->a->getNewSongForm() ) > 10 );
+    $this->assertTrue( strlen( $this->a->getUploadFileForm() ) > 10 );
+    $this->assertTrue( strlen( $this->a->getNewSongForm() ) > 10 );
   }  
 
 }

@@ -8,25 +8,30 @@ header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 ?>
 <?php 
 $bShowEmailForm = true;
-include_once "include_refsB.php";
+include_once "include_refsC.php";
+$user = new User();
+$render = new Render();
+$arrangement = new Arrangement();
+$gig = new Gig();
+
 if (isset($_REQUEST['confirmation'])) {
-	setValidCookie( $_REQUEST['confirmation'] );
+	$user->setValidCookie( $_REQUEST['confirmation'] );
 	header('Location: https://tsbchart.000webhostapp.com');
 } elseif (isset($_REQUEST['action'])) {
     if ( 'logout'==$_REQUEST['action']) {
         
-			deleteCookie();
+			$user->deleteCookie();
 	        header('Location: https://tsbchart.000webhostapp.com');
     }
 	if ('storeEmail'==$_REQUEST['action']) {
-		if (!(storeEmail($_REQUEST['email']))){
+		if (!($user->storeEmail($_REQUEST['email']))){
 			echo "<p>Email not recognised.</p>";
-			echo getEmailForm();
-			echo getFooter();
+			echo $user->getEmailForm();
+			echo $render->getFooter();
 			exit();
 		} else {
 			echo "<p>Please check your email for a confirmation code. If it doesn't arrive within 5 mins please contact Owen.</p>";
-			echo getFooter();
+			echo $render->getFooter();
 			exit();
 		}
 
@@ -44,7 +49,7 @@ if (isset($_REQUEST['confirmation'])) {
 // authenticate user.  Valid cookie or no valid cookie
 // if valid cookie, provide content
 // if no valid cookie, show disabled forms and offer means of authentication
-if (hasValidCookie()){
+if ($user->hasValidCookie()){
     $arrangementID = -1; $gigID = -1;
 	if (isset($_GET['arrangementID'])) {
         $arrangementID = $_GET['arrangementID'];
@@ -55,35 +60,35 @@ if (hasValidCookie()){
 	if (isset($_REQUEST['action'])) {
 		if ( 'getChartList'==$_GET['action'] ) {
 	        if (isset($_GET['partID'])) {
-			echo getOutputLink( listAll($_GET['partID']) );
+			echo $render->getOutputLink( $arrangement->listAll($_GET['partID']) );
 	        }
-			echo getRequestForm($arrangementID, $gigID);
-			echo getFooter();
+			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getFooter();
 			exit();
 	       
 		} elseif ( 'getChart'==$_GET['action']) {
-			echo getOutputLink( pdfFromGet($_GET) );
-			echo getRequestForm($arrangementID, $gigID);
-			echo getFooter();
+			echo $render->getOutputLink( $arrangement->pdfFromGet($_GET) );
+			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getFooter();
 			exit();
 		} elseif ( 'getGig'==$_GET['action']) {
-			echo getOutputLink( pdfFromGig($_GET) );
-			echo getRequestForm($arrangementID, $gigID);
-			echo getFooter();
+			echo $render->getOutputLink( $gig->pdfFromGig($_GET) );
+			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getFooter();
 			exit();
 		} else {
-			echo getRequestForm($arrangementID, $gigID);
-			echo getFooter();
+			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getFooter();
 			exit();
 		}
 	} else {
-			echo getRequestForm($arrangementID, $gigID);
-		echo getFooter();
+			echo $render->getRequestForm($arrangementID, $gigID);
+		echo $render->getFooter();
 			exit();
 	}
 } else {
-	echo getEmailForm();
-	echo getFooter();
+	echo $user->getEmailForm();
+	echo $render->getFooter();
 			exit();
 }
 
