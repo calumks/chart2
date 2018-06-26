@@ -79,7 +79,7 @@ class Form_Test extends PHPUnit_Framework_TestCase
   }
 
   public function test_FormList(){
-	$this->a->listPdf( 'pdf');
+$this->assertTrue( strlen(	$this->a->listPdf( 'pdf')) > 0);
   }
 
 // forms with positive length (even in a blank database)
