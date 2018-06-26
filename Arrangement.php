@@ -802,7 +802,7 @@ if ($file['error'] == UPLOAD_ERR_OK) {
 function setPartPage( $efileID, $partID, $startPage, $endPage){
     
     if ($endPage >= $startPage && $efileID > 0 && $partID > 0){
-        $sql = "INSERT INTO efilePart (efileID, partID, startPage, endPage) VALUES('". $efileID . "',". $partID . "," . $startPage . "," . $endPage . ");";
+        $sql = "INSERT INTO efilePart (efileID, partID, startPage, endPage) VALUES(". $efileID . ",". $partID . "," . $startPage . "," . $endPage . ");";
         $result = Connection::my_execute( $sql );
 }
  
