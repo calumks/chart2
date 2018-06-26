@@ -39,7 +39,7 @@ function getOutputLink( $filename ){
 function getRequestForm( $arrangementID = -1, $gigID = -1){
 	$out = "";
 	if ($arrangementID > 0){
-	    $out .= $this->arranegement->getArrangementForm($arrangementID);
+	    $out .= $this->arrangement->getArrangementForm($arrangementID);
 	}
 	$out .= $this->gig->getGigForm( $gigID);
 	$out .= "<fieldset><legend>Alphabetical order (* = not in pads)</legend>";

@@ -92,6 +92,10 @@ class Form_Test extends PHPUnit_Framework_TestCase
     $this->assertTrue( strlen( $this->r->getOutputLink($this->a->listAll(-1))) > 10	);
   }  
 
+  public function test_getRequestForm(){
+    $this->assertTrue( strlen( $this->r->getRequestForm(1,1) ) > 10 );    // FPDF
+  }
+
   public function test_indexFormLength(){
     $this->assertTrue( strlen( $this->u->getNewUserForm() ) > 10 );
     $this->assertTrue( strlen( $this->u->getEmailForm() ) > 10 );
