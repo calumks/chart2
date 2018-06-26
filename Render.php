@@ -2,6 +2,14 @@
 
 class Render{
 
+private $gig;
+private $arrangement;
+
+    function __construct() {
+        $this->gig = New Gig();
+        $this->arrangement = New Arrangement();
+    }
+
 function getFooter(){
 
 $form = "<p>Any bugs, please let Owen know at a rehearsal, or create an issue at  <a href='https://github.com/owen-kellie-smith/chart2'>Github</a>.</p>";
@@ -31,14 +39,14 @@ function getOutputLink( $filename ){
 function getRequestForm( $arrangementID = -1, $gigID = -1){
 	$out = "";
 	if ($arrangementID > 0){
-	    $out .= Arrangement::getArrangementForm($arrangementID);
+	    $out .= $this->arranegement->getArrangementForm($arrangementID);
 	}
-	$out .= Gig::getGigForm( $gigID);
+	$out .= $this->gig->getGigForm( $gigID);
 	$out .= "<fieldset><legend>Alphabetical order (* = not in pads)</legend>";
-	$out .= Gig::getForm( $gigID);
+	$out .= $this->gig->getForm( $gigID);
 	$out .= "</fieldset>";
 	$out .= "<fieldset><legend>Get all titles and comments (no music)</legend>";
-	$out .= Arrangement::getChartListForm();
+	$out .= $this->arrangement->getChartListForm();
 	$out .= "</fieldset>";
 	$out .= "<p><a href='maintenance/'>Maintenance</a></p>";
 

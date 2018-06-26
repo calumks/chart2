@@ -3,26 +3,33 @@
 class User
 {
 
+private $conn;
+
+    function __construct() {
+        $this->conn = New Connection();
+    }
+
+
 function addToCookieArray( $newValue, $expiry ){
 	$oldarray = array();
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 	}
 	$oldarray[] = $newValue;
-	self::setTSBcookieArray( $oldarray, $expiry );
+	$this->setTSBcookieArray( $oldarray, $expiry );
 }
 
 
 function deleteCookie(){
-	self::setTSBcookie( "", time()-3600 );
-	self::setTSBcookieArray( "", time()-3600 );
+	$this->setTSBcookie( "", time()-3600 );
+	$this->setTSBcookieArray( "", time()-3600 );
 }
 
 
 function getAdminEmails(){
     $return = array();
     $sql = "SELECT AES_DECRYPT(aesEmail, UNHEX(SHA2('A String Of Pearls',512))) from user where aesEmail is not null"; 
-    foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	$return[] = $row[0];
     }
     return $return;
@@ -40,25 +47,11 @@ return $form;
 }
 
 
-function getIP(){
-    
-    // Get user IP address
-if ( isset($_SERVER['HTTP_CLIENT_IP']) && ! empty($_SERVER['HTTP_CLIENT_IP'])) {
-    $ip = $_SERVER['HTTP_CLIENT_IP'];
-} elseif ( isset($_SERVER['HTTP_X_FORWARDED_FOR']) && ! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-} else {
-    $ip = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
-}
 
-$ip = filter_var($ip, FILTER_VALIDATE_IP);
-$ip = ($ip === false) ? '0.0.0.0' : $ip;
-return $ip;
-}
 
 
 function getOneAdminEmail(){
-    $all = self::getAdminEmails();
+    $all = $this->getAdminEmails();
     if (count($all) > 0){
         return $all[0]; 
     } else {
@@ -84,7 +77,7 @@ return $form;
 function getUserFromTsbcode( $tsbcode ){
 $sql = "SELECT userid FROM confirmation where tsbcode = '" . $tsbcode ."' LIMIT 1;";
 $ret = -1; // if nothing found
-foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	$ret = $row[0];
     } 
 return $ret;
@@ -97,7 +90,7 @@ $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
 }
-$breturn = self::isrecognisedAdmin( $_COOKIE['tsbcode'] );
+$breturn = $this->isrecognisedAdmin( $_COOKIE['tsbcode'] );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
@@ -112,7 +105,7 @@ $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
 }
-$breturn = self::isCookieForEmail( $_COOKIE['tsbcode'], $email );
+$breturn = $this->isCookieForEmail( $_COOKIE['tsbcode'], $email );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
@@ -129,7 +122,7 @@ $breturn = false;
 if (!isset($_COOKIE['tsbcode'])){
 	return false;
 }
-$breturn = self::isrecognisedip( $_COOKIE['tsbcode'] );
+$breturn = $this->isrecognisedip( $_COOKIE['tsbcode'] );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
@@ -144,7 +137,7 @@ $breturn = false;
 
 $sql = "SELECT COUNT(*) FROM confirmation INNER JOIN user ON confirmation.userID = user.userID where tsbcode = '" . $cookie ."' AND user.md5email = md5(trim(upper('" . $email . "')));";
 
-foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	if ($row[0] > 0){
 		$breturn = true;
 	}
@@ -157,7 +150,7 @@ function isrecognisedAdmin( $cookie ){
 $breturn = false;
 
 $sql = "SELECT COUNT(*) FROM confirmation INNER JOIN user on confirmation.userID = user.userID where tsbcode = '" . $cookie ."' AND user.aesEmail is not null";
-foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	if ($row[0] > 0){
 		$breturn = true;
 	}
@@ -170,7 +163,7 @@ function isrecognisedip( $cookie ){
 $breturn = false;
 $sql = "SELECT COUNT(*) FROM confirmation where tsbcode = '" . $cookie ."';";
 
-foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	if ($row[0] > 0){
 		$breturn = true;
 	}
@@ -183,8 +176,8 @@ return $breturn;
 function sendAdminDudEmail( $dudEmail ){
 	$msg = "Unrecognised email.\n  " . $dudEmail;
 	$msg = wordwrap($msg, 70);	
-	$headers = 'Reply-To: ' . self::getOneAdminEmail();
-	mail( self::getOneAdminEmail(), "TSB Chart dud email", $msg, $headers);
+	$headers = 'Reply-To: ' . $this->getOneAdminEmail();
+	mail( $this->getOneAdminEmail(), "TSB Chart dud email", $msg, $headers);
 }
 
 function sendCode( $email ){
@@ -192,17 +185,17 @@ function sendCode( $email ){
 $md5now = md5(time());
 $sql = "SELECT userID from user where md5email = md5(trim(upper(' " . $email . "'))) LIMIT 1";
 
-    foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	$userID = $row[0];
     }
 
-$sql = "INSERT into confirmation (userID, confirmationCode, ip) VALUES( " . $userID . ", '" . $md5now . "', '" . self::getIP() . "');";
-$result = Connection::my_execute( $sql);
+$sql = "INSERT into confirmation (userID, confirmationCode, ip) VALUES( " . $userID . ", '" . $md5now . "', '" . $this->getIP() . "');";
+$result = $this->conn->my_execute( $sql);
 if ($result){
 	$msg = "To use the TSB chart printer please paste this address into your browser.\n  http://tsbchart.000webhostapp.com/?confirmation=" . $md5now;
 	$msg = wordwrap($msg, 70);
 	
-	$headers = 'Reply-To: ' . self::getOneAdminEmail(). "\r\n" . 'Cc: ' .self::getOneAdminEmail();
+	$headers = 'Reply-To: ' . $this->getOneAdminEmail(). "\r\n" . 'Cc: ' .$this->getOneAdminEmail();
 	mail( $email, "TSB Chart confirm email", $msg, $headers);
 	}
 
@@ -234,8 +227,8 @@ if ($result) {
 	$md5now = md5(time());
 	$sql = "UPDATE confirmation SET confirmationCode='EXPIRED', tsbcode = '" . $md5now . "' WHERE confirmationID = " . $confirmationID . ";";
 	$result = mysqli_query($link, $sql);
-	self::setTSBcookie( $md5now, time() + 365 * 24 * 60 * 60 );
-	self::addToCookieArray( $md5now, time() + 365 * 24 * 60 * 60 );
+	$this->setTSBcookie( $md5now, time() + 365 * 24 * 60 * 60 );
+	$this->addToCookieArray( $md5now, time() + 365 * 24 * 60 * 60 );
 	}
 } else {
     echo "Error: " . $sql . "<br>" . mysqli_error($link);
@@ -248,12 +241,12 @@ mysqli_close( $link );
 
 function storeEmail( $email = ""){
     $sql = "SELECT COUNT(*) from user where md5email = md5(trim(upper('" . $email . "')))";
-    foreach(Connection::listMultiple( $sql ) AS $index=>$row ){
+    foreach($this->conn->listMultiple( $sql ) AS $index=>$row ){
 		if ($row[0] > 0) {
-			self::sendCode( $email );
+			$this->sendCode( $email );
 			return true;
 		} else {
-			self::sendAdminDudEmail( $email );
+			$this->sendAdminDudEmail( $email );
 			return false;
 		}
     }
@@ -264,7 +257,7 @@ function storeEmail( $email = ""){
 function storeNewUser( $email, $nickName ){
 
 $sql = "INSERT INTO user(md5email, nickName) SELECT md5(trim(upper(' " . $email . "'))), '" . $nickName . "';";
-$result = Connection::my_execute($sql);
+$result = $this->conn->my_execute($sql);
 }
 
 } // end class User

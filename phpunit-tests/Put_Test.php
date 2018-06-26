@@ -3,95 +3,101 @@
 class Put_Test extends PHPUnit_Framework_TestCase
 {
   private $debug = false;
+  private $a;
+  private $g;
+  private $u;
   
   public function setup(){
+	$this->a = new Arrangement();
+	$this->g = new Gig();
+	$this->u = new User();
   }
 
   public function tearDown(){
   }
   
   public function test_StoreEmail(){
-    $this->assertTrue( !User::storeEmail() );
+    $this->assertTrue( !$this->u->storeEmail() );
   }
 
   public function test_ReceiveFile(){
 //   $file = array('error' => UPLOAD_ERR_OK, 'tmp_name' => 'afile.pdf', 'name' => 'afile.pdf');
    $file = array();
-	Arrangement::receiveFile( $file );
+	$this->a->receiveFile( $file );
   }
 
   public function test_DeleteFile(){
-	Arrangement::deleteFile( 'noFile.abc');
+	$this->a->deleteFile( 'noFile.abc');
   }
 
 
   public function test_postNewPerson(){
-        Arrangement::postNewPerson();
+        $this->a->postNewPerson();
 }
 
   public function test_storeNewUser(){
-                User::storeNewUser('dud@gmail.com','Dopey');
+                $this->u->storeNewUser('dud@gmail.com','Dopey');
 }
 
   public function test_postNewSong(){
-        Arrangement::postNewSong();
+        $this->a->postNewSong();
 }
 
 
   public function test_setPublication(){
-        Arrangement::setPublication();
+        $this->a->setPublication();
 }
 
   public function test_deletePartPage(){
-            Arrangement::deletePartPage( 1 );
+            $this->a->deletePartPage( 1 );
 }
 
   public function test_setPartPage(){
-            Arrangement::setPartPage( 1, 1, 1, 1);
+            $this->a->setPartPage( 1, 1, 1, 1);
 }
 
   public function test_addNote(){
-            Arrangement::addNote(1, 'Some text');
-            Arrangement::updateNote(1, 'Some text');
+            $this->a->addNote(1, 'Some text');
+            $this->a->updateNote(1, 'Some text');
 }
 
   public function test_deleteNote(){
-            Arrangement::deleteNote(1);
+            $this->a->deleteNote(1);
 }
 
   public function test_toggle(){
-            Arrangement::addToBackup( 1, 1 );
-            Arrangement::addToBackup( 1, 0 );
-            Arrangement::addToPads( 1, 1 );
-            Arrangement::addToPads( 1, 0 );
+            $this->a->addToBackup( 1, 1 );
+            $this->a->addToBackup( 1, 0 );
+            $this->a->addToPads( 1, 1 );
+            $this->a->addToPads( 1, 0 );
 }
 
   public function test_deleteSetListPart(){
-            Gig::deleteSetListPart(1);
+            $this->g->deleteSetListPart(1);
 }
 
   public function test_addToSet(){
-            Gig::addToSet(1, 10, 1);
+            $this->g->addToSet(1, 10, 1);
 }
 
   public function test_postNewSetList(){
 	$_in = array('isGig'=>'isPublic','gigName'=>'A good name','gigDate'=>'2018');
-        Gig::postNewSetList($_in);
+        $this->g->postNewSetList($_in);
 }
 
   public function test_copySetList(){
-            Gig::copySetList( 1, 2);
+            $this->g->copySetList( 1, 2);
 }
 
   public function test_deleteSet(){
-        Gig::deleteSet();
+        $this->g->deleteSet();
 	$_in = array('gigID'=>1);
-        Gig::deleteSet($_in);
+        $this->g->deleteSet($_in);
 }
 
   public function test_SetCookie(){
 //	deleteCookie(); Can't test -- it sets cookies
-    $this->assertTrue( !User::setValidCookie( 'dudCode' ) );
+    $this->assertTrue( !$this->u->setValidCookie( 'dudCode' ) );
   }
 
 

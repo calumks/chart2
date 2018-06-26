@@ -4,11 +4,16 @@ use \setasign\Fpdi;
 
 class Arrangement{
 
+private $conn;
+
+    function __construct() {
+        $this->conn = New Connection();
+    }
 
 function addNote($publicationID, $noteText){
     if ($publicationID > 0 && strlen($noteText) > 3){
         $sql = "INSERT INTO note(publicationID, noteText, noteDate) VALUES('" . $publicationID . "','". $noteText . "', NOW())";
-        $result = Connection::my_execute( $sql);
+        $result = $this->conn->my_execute( $sql);
     }
 }
 
@@ -16,7 +21,7 @@ function addNote($publicationID, $noteText){
 function addToBackup( $arrangementID, $iAdd){
 
 $sqlUpdate = "update arrangement set isBackedUp = " . $iAdd . " WHERE arrangementID = ". $arrangementID . ";";
-$result = Connection::my_execute( $sqlUpdate);
+$result = $this->conn->my_execute( $sqlUpdate);
 
 }
 
@@ -24,7 +29,7 @@ $result = Connection::my_execute( $sqlUpdate);
 function addToPads( $arrangementID, $iAdd){
 
 $sqlUpdate = "update arrangement set isInPads = " . $iAdd . " WHERE arrangementID = ". $arrangementID . ";";
-$result = Connection::my_execute( $sqlUpdate);
+$result = $this->conn->my_execute( $sqlUpdate);
 
 }
 
@@ -33,7 +38,7 @@ function deleteFile($fileNameExclPath){
 
 $sql = "SELECT COUNT(*) from efile where name='" . $fileNameExclPath . "'";
 $bFound = true;
-foreach( Connection::listMultiple($sql) as $index=>$row ){
+foreach( $this->conn->listMultiple($sql) as $index=>$row ){
         		if ( $row[0]==0 ){
         		    $bFound = false;
         		 }
@@ -50,7 +55,7 @@ if( !$bFound){
 function deleteNote($noteID){
     if ($noteID > 0){
         $sql = "DELETE FROM note where noteID='" . $noteID . "'";
-        $result = Connection::my_execute( $sql);
+        $result = $this->conn->my_execute( $sql);
     }
 }
 
@@ -59,7 +64,7 @@ function deletePartPage( $efilePartID){
     
     if ($efilePartID > 0 ){
         $sql = "DELETE FROM  efilePart where eFilePartID = ". $efilePartID . ";";
-        $result = Connection::my_execute( $sql );
+        $result = $this->conn->my_execute( $sql );
 	}
  
 }
@@ -97,7 +102,7 @@ $sqlCharts = "SELECT name, description, noteText, date_format(noteDate, '%Y-%m-%
 	$pdf->AddPage();
 	$pdf->SetFont('Arial','',14);
 	$rowcount = 0;
-    	foreach( Connection::listMultiple( $sqlCharts ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sqlCharts ) AS $index=>$row ){
             $pdf->Write(5,$row[0] . " (" . $row[1] . ")\n\n");
             $pdf->Write(5,$row[2] . "\n\n\n\n"); // no date
 	}
@@ -180,7 +185,7 @@ return $form;
 function getEditNoteForm(){
 $form = "";
 $sqlCharts = "SELECT N.noteID, V.name, V.description, N.noteText, date_format(N.noteDate, '%Y-%m-%d'), N.publicationID FROM note as N, view_publication as V WHERE V.publicationID=N.publicationID  ORDER BY name ASC, noteDate DESC"; 
-    	foreach( Connection::listMultiple( $sqlCharts ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sqlCharts ) AS $index=>$row ){
             $form .= "<div>";
             $form .= "<fieldset><legend>" . $row[1] . " " . $row[2] . " " . $row[4] . "</legend>";
             $form .= "<form method='POST' action=''>";
@@ -205,10 +210,10 @@ return $form;
 
 function getEfileForm( $publicationID = -1){
     
-    $return =  self::getEfileFormOrder( $publicationID );
+    $return =  $this->getEfileFormOrder( $publicationID );
 
-    $return .= self::getEfileFormOrder( $publicationID, ' order by E.efileID DESC ', ' date');
-    $return .= self::getPubForm();
+    $return .= $this->getEfileFormOrder( $publicationID, ' order by E.efileID DESC ', ' date');
+    $return .= $this->getPubForm();
     return $return;
     
 }
@@ -225,8 +230,8 @@ function getEfileFormOrder( $publicationID = -1, $orderby = 'order by E.name  AS
     $return .= "<input type='hidden' name='action' value='getEfileParts'>";
     $return .= "<p>Efile " . $label . "<select name='efileID'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (Connection::listMultiple("SELECT E.efileID, CONCAT(E.name,': ', S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName), V.countPages, E.name  FROM efile as E, publication as P, arrangement as A, person as PP, song AS S, view_efilePages AS V  WHERE  E.publicationID=P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID and E.efileID=V.efileID " . $wherePub . $orderby )  as $key=>$song){
-        $return .= "<option value='" . $song[0] . "'>" . $song[2] . "/" . self::numPages('../pdf/' . $song[3]) . " " . $song[1] . "</option>";
+    foreach ($this->conn->listMultiple("SELECT E.efileID, CONCAT(E.name,': ', S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName), V.countPages, E.name  FROM efile as E, publication as P, arrangement as A, person as PP, song AS S, view_efilePages AS V  WHERE  E.publicationID=P.publicationID and P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID and E.efileID=V.efileID " . $wherePub . $orderby )  as $key=>$song){
+        $return .= "<option value='" . $song[0] . "'>" . $song[2] . "/" . $this->numPages('../pdf/' . $song[3]) . " " . $song[1] . "</option>";
     }
     $return .= "</select>";
     $return .= "<p><input type='submit' value='Get parts'>";
@@ -238,19 +243,19 @@ function getEfileFormOrder( $publicationID = -1, $orderby = 'order by E.name  AS
 
 function getFormBackup( $arrID, $isIn, $arrLabel){
     if ($isIn){
-        return self::getRemoveFromBackupForm( $arrID, $arrLabel);
+        return $this->getRemoveFromBackupForm( $arrID, $arrLabel);
     }
     else{
-        return self::getAddToBackupForm( $arrID, $arrLabel);
+        return $this->getAddToBackupForm( $arrID, $arrLabel);
     }
 }
 
 function getFormPads( $arrID, $isInPads, $arrLabel){
     if ($isInPads){
-        return self::getRemoveFromPadsForm( $arrID, $arrLabel);
+        return $this->getRemoveFromPadsForm( $arrID, $arrLabel);
     }
     else{
-        return self::getAddToPadsForm( $arrID, $arrLabel);
+        return $this->getAddToPadsForm( $arrID, $arrLabel);
     }
 }
 
@@ -263,7 +268,7 @@ $sqlCharts = "SELECT V.publicationID, V.name, V.description FROM view_publicatio
             $form .= "<form method='POST' action=''>";
             $form .= "<select name='publicationID'>";
             $form .= "<option value='-1'></option>";
-    	foreach( Connection::listMultiple( $sqlCharts ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sqlCharts ) AS $index=>$row ){
 
             $form .= "<option value='". $row[0] . "'>" . $row[1] . " " . $row[2] . "</option>";
     	}
@@ -304,14 +309,14 @@ return $form;
 function getPartForm($efileID){
  
     $fname = "";
-    foreach (Connection::listMultiple("SELECT E.name AS Ename  FROM efile as E WHERE  E.efileID = " . $efileID . "")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT E.name AS Ename  FROM efile as E WHERE  E.efileID = " . $efileID . "")  as $key=>$song){
         $fname = $song[0];
     }   
     $return = "";
     $return .= "<fieldset><legend>Delete part/page pairs</legend>";
     $return .= "<div><table>";
     $return .= "<tr><th>Part<th>Start Page<th>End Page<th>Efile</tr>";
-    foreach (Connection::listMultiple("SELECT X.efilePartID, X.startPage, X.endPage, P.name, E.name AS Ename  FROM efilePart as X, part as P, efile as E WHERE  X.partID=P.partID and X.efileID = E.efileID  and E.efileID = " . $efileID . " order by X.startPage  ASC")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT X.efilePartID, X.startPage, X.endPage, P.name, E.name AS Ename  FROM efilePart as X, part as P, efile as E WHERE  X.partID=P.partID and X.efileID = E.efileID  and E.efileID = " . $efileID . " order by X.startPage  ASC")  as $key=>$song){
         $return .= "<tr>";
         $return .= "<td>" . $song[3] . "</td>";
         $return .= "<td>" . $song[1] . "</td>";
@@ -330,14 +335,14 @@ function getPartForm($efileID){
     $return .= "</fieldset>";
     $return .= "<fieldset><legend>Add part/page pair</legend>";
     $return .= "<p><a href='../pdf/" . $fname . "'>" . $fname . "</a></p>";
-    $numpages = self::numPages('../pdf/' . $fname);
+    $numpages = $this->numPages('../pdf/' . $fname);
     $return .= "<div>";
     $return .= "<form action='' method='POST'>";
     $return .= "<input type='hidden' name='action' value='addEfilePart'>";
     $return .= "<input type='hidden' name='efileID' value='" . $efileID . "'>";
     $return .= "<p>Part <select name='partID'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (Connection::listMultiple("SELECT P.partID, P.name FROM part as P  order by P.name  ASC")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT P.partID, P.name FROM part as P  order by P.name  ASC")  as $key=>$song){
         $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
     }
     $return .= "</select>";
@@ -364,7 +369,7 @@ function getPeople(){
 
 $sql = "SELECT firstName, lastName, nickName from person order by lastName  ASC";
 $return = "<table> \n <tr><th>First Name<th>Last Name<th>Nick Name</tr> \n";
-    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 		$return .= "<tr><td>" . $row[0] . "</td><td>" . $row[1] . "</td><td>" . $row[2] . "</td></tr> \n";
     	}
 $return .= "</table>";
@@ -379,7 +384,7 @@ function getPubForm(){
     $return .= "<input type='hidden' name='action' value='getParts'>";
     $return .= "<p>Publication <select name='publicationID'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (Connection::listMultiple("SELECT P.publicationID, CONCAT(S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName) FROM publication as P, arrangement as A, person as PP, song AS S WHERE  P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID order by S.name  ASC")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT P.publicationID, CONCAT(S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName) FROM publication as P, arrangement as A, person as PP, song AS S WHERE  P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID order by S.name  ASC")  as $key=>$song){
         $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
     }
     $return .= "</select>";
@@ -396,7 +401,7 @@ function getPublicationForm( $path = '../pdf'){
     $return .= "<input type='hidden' name='action' value='setPublication'>";
     $return .= "<p>Efile <select name='efile'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (self::listPdfUnlisted( $path ) as $key=>$filename){
+    foreach ($this->listPdfUnlisted( $path ) as $key=>$filename){
         $return .= "<option value='" . $filename . "'>" . $filename . "</option>";
     }
     $return .= "</select>";
@@ -405,20 +410,20 @@ function getPublicationForm( $path = '../pdf'){
     $return .= "<option value='1'>Landscape</option>";
     $return .= "</select>";    $return .= "<p>Publication <select name='publicationID'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (Connection::listMultiple("SELECT P.publicationID, CONCAT(S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName) FROM publication as P, arrangement as A, person as PP, song AS S WHERE  P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID order by S.name  ASC")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT P.publicationID, CONCAT(S.name,',',P.description,', ', PP.firstName , ' ' ,PP.lastName) FROM publication as P, arrangement as A, person as PP, song AS S WHERE  P.arrangementID=A.arrangementID and A.arrangerPersonID=PP.personID AND A.songID = S.songID order by S.name  ASC")  as $key=>$song){
         $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
     }
     $return .= "</select>";
     $return .= "<p>OR (if publication not defined)</p>";
     $return .= "<p>Song <select name='songID'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (Connection::listMultiple("SELECT songID, name from song order by name  ASC")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT songID, name from song order by name  ASC")  as $key=>$song){
         $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
     }
     $return .= "</select>";
     $return .= "<p>Arranger <select name='arrangerPersonID'>";
     $return .= "<option value='" . -1 . "'>" . "" . "</option>";
-    foreach (Connection::listMultiple("SELECT personID, CONCAT(firstName,' ',lastName) from person order by LastName  ASC")  as $key=>$song){
+    foreach ($this->conn->listMultiple("SELECT personID, CONCAT(firstName,' ',lastName) from person order by LastName  ASC")  as $key=>$song){
         $return .= "<option value='" . $song[0] . "'>" . $song[1] . "</option>";
     }
     $return .= "</select>";
@@ -454,8 +459,8 @@ function getSongs(){
 
 $sql = "SELECT S.name, A.arrangementID, A.isInPads, CONCAT(S.Name, ' ', P.firstName, ' ', P.lastName) as ArrLabel, A.isBackedUp from song AS S LEFT JOIN ( arrangement as A INNER JOIN person as P ON A.arrangerPersonID = P.personID)  ON A.songID = S.songID order by S.name  ASC";
 $return = "<table> \n <tr><th>Pads<th>Back-up<th>Name</tr> \n";
-    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
-		$return .= "<tr><td>". self::getFormPads($row[1], $row[2], "") . "</td><td>". self::getFormBackup($row[1], $row[4], "") . "</td><td>" . $row[3] . "</td></tr> \n";
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
+		$return .= "<tr><td>". $this->getFormPads($row[1], $row[2], "") . "</td><td>". $this->getFormBackup($row[1], $row[4], "") . "</td><td>" . $row[3] . "</td></tr> \n";
     	}
 
 $return .= "</table>";
@@ -658,7 +663,7 @@ $files = array_diff(scandir($path), array('.', '..'));
 asort($files);
 $sql = "SELECT name from efile";
 $pairedFiles = array();
-    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
     	$pairedFiles[] = $row[0];
     	}
 
@@ -666,7 +671,7 @@ $pairedFiles = array();
 $unpaired = array_diff($files, $pairedFiles);
 $unpaired2 = array();
 foreach ($unpaired as $key=>$filename){
-    if (self::numPages($path . "/" . $filename) > 0){
+    if ($this->numPages($path . "/" . $filename) > 0){
         $unpaired2[] = $filename;
     }
 }
@@ -725,15 +730,15 @@ $pdf = new Fpdi\Fpdi();
 $pageCount = 1;
 	$pdf->AddPage();
 	$pdf->SetFont('Arial','',14);
-    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
  	$pdf->Write(5,$pageCount . "  (" . $row[4] . ") ");
         $pdf->Write(5,$row[5] . "\n");
 	$pageCount = $pageCount + 1 + $row[2] - $row[1];
 	}
 if (isset($input['arrangement'])){
-	self::getAllNotes($pdf, $input['arrangement']);
+	$this->getAllNotes($pdf, $input['arrangement']);
 }
-    	foreach( Connection::listMultiple( $sql ) AS $index=>$row ){
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	$pdf->setSourceFile("pdf/" . $row[0]);
 	for ($i = $row[1], $ii = $row[2]; $i <= $ii; $i++){
 		$tplIdx = $pdf->importPage($i);
@@ -746,7 +751,7 @@ if (isset($input['arrangement'])){
 		}
 	}
         }
-Connection::saveRequest($input);
+$this->conn->saveRequest($input);
 $yourFile =  'output/'. md5(time()) . 'myfile.pdf';
 $pdf->Output(getcwd() . "/" . $yourFile,'F');
 return $yourFile;
@@ -758,7 +763,7 @@ function postNewPerson($person=array()){
 	if (isset($person['firstName']) && isset($person['lastName']) && isset($person['nickName'])){
 
 $sql = "insert into person (firstName, lastName, nickName) VALUES( '".$person['firstName'] ."', '".$person['lastName']."', '".$person['nickName']."');";
-$result = Connection::my_execute( $sql);
+$result = $this->conn->my_execute( $sql);
 }
 
 }
@@ -767,7 +772,7 @@ $result = Connection::my_execute( $sql);
 function postNewSong($song=array()){
     if (isset($song['songName'])){
 $sqlNewSong = "insert into song  (name) VALUES( '".$song['songName'] ."');";
-$result = Connection::my_execute( $sqlNewSong );
+$result = $this->conn->my_execute( $sqlNewSong );
 	}
 }
 
@@ -787,7 +792,7 @@ if ($file['error'] == UPLOAD_ERR_OK) {
         // basename() may prevent filesystem traversal attacks;
         // further validation/sanitation of the filename may be appropriate
     $name = basename($file['name']);
-    $newName = self::newName($name,10) . ".pdf";
+    $newName = $this->newName($name,10) . ".pdf";
     if(mime_content_type($file['tmp_name']) == "application/pdf" && !file_exists(SITE_ROOT . "/$uploads_dir/$newName")){
         move_uploaded_file($tmp_name, SITE_ROOT . "/$uploads_dir/$newName");
         return true;
@@ -803,7 +808,7 @@ function setPartPage( $efileID, $partID, $startPage, $endPage){
     
     if ($endPage >= $startPage && $efileID > 0 && $partID > 0){
         $sql = "INSERT INTO efilePart (efileID, partID, startPage, endPage) VALUES(". $efileID . ",". $partID . "," . $startPage . "," . $endPage . ");";
-        $result = Connection::my_execute( $sql );
+        $result = $this->conn->my_execute( $sql );
 }
  
 }
@@ -815,15 +820,15 @@ function setPublication($input = array()){
         
     if (isset($input['publicationID']) && $input['publicationID'] > 0){
         $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $input['efile'] . "',1,". $input['formatID'] . "," . $input['publicationID'] . ");";
-        $result = Connection::my_execute( $sql );
+        $result = $this->conn->my_execute( $sql );
 
     } elseif (isset($input['description']) && strlen($input['description']) > 0 && isset($input['songID']) && isset($input['arrangerPersonID'])  && $input['songID']>0 && $input['arrangerPersonID']>0 ){
         $sql = "INSERT INTO arrangement (songID, arrangerPersonID) VALUES(". $input['songID'] . ",". $input['arrangerPersonID'] . ");";
-        $last_id = Connection::my_insert_id($sql);
+        $last_id = $this->conn->my_insert_id($sql);
         $sql = "INSERT INTO publication (arrangementID, description) VALUES(". $last_id . ",'". $input['description'] . "');";
-        $last_id = Connection::my_insert_id($sql);
+        $last_id = $this->conn->my_insert_id($sql);
         $sql = "INSERT INTO efile (name, efileTypeID, formatID, publicationID) VALUES('". $input['efile'] . "',1,". $input['formatID'] . "," . $last_id . ");";
-        $result = Connection::my_execute( $sql);
+        $result = $this->conn->my_execute( $sql);
     }
   }
  
@@ -834,7 +839,7 @@ function setPublication($input = array()){
 function updateNote($noteID, $noteText){
     if ($noteID > 0 && strlen($noteText) > 3){
         $sql = "UPDATE note SET noteText='" . $noteText . "', noteDate = NOW() where noteID='" . $noteID . "'";
-        $result = Connection::my_execute( $sql);
+        $result = $this->conn->my_execute( $sql);
     }
 }
 
