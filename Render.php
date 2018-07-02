@@ -49,6 +49,7 @@ function getRequestForm( $arrangementID = -1, $gigID = -1){
 	$out .= $this->arrangement->getChartListForm();
 	$out .= "</fieldset>";
 	$out .= "<p><a href='maintenance/'>Maintenance</a></p>";
+	$out .= "<p><a href='images/'>Images</a></p>";
 
 	return $out;
 	}

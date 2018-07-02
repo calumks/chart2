@@ -94,7 +94,7 @@ $breturn = $this->isrecognisedAdmin( $_COOKIE['tsbcode'] );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
-			$breturn = $breturn || isrecognisedAdmin( $ckie );
+			$breturn = $breturn || $this->isrecognisedAdmin( $ckie );
 		}
 	}
 return $breturn;
@@ -109,7 +109,7 @@ $breturn = $this->isCookieForEmail( $_COOKIE['tsbcode'], $email );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
-			$breturn = $breturn || isCookieForEmail( $ckie, $email );
+			$breturn = $breturn || $this->isCookieForEmail( $ckie, $email );
 		}
 	}
 return $breturn;
@@ -126,7 +126,7 @@ $breturn = $this->isrecognisedip( $_COOKIE['tsbcode'] );
 	if (isset($_COOKIE['tsbcodearray'])){
 		$oldarray = json_decode($_COOKIE['tsbcodearray']);
 		foreach ($oldarray as $ckie){
-			$breturn = $breturn || isrecognisedip( $ckie );
+			$breturn = $breturn || $this->isrecognisedip( $ckie );
 		}
 	}
 return $breturn;
