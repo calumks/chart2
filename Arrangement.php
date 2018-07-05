@@ -732,6 +732,9 @@ if (isset($input['part'])){
       $partWhere .= " OR P.partID='" . $value . "' ";
     }
 }
+if (isset($input['allParts'])){
+      $partWhere .= " OR 1 ";
+}
 if (isset($input['arrangement'])){
     foreach ($input['arrangement'] AS $index=>$value){
       $arrangeWhere .= "," .   $value;
@@ -755,17 +758,36 @@ if (isset($input['arrangement'])){
 	$this->getAllNotes($pdf, $input['arrangement']);
 }
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
-	$pdf->setSourceFile("pdf/" . $row[0]);
-	for ($i = $row[1], $ii = $row[2]; $i <= $ii; $i++){
+	  $pdf->setSourceFile("pdf/" . $row[0]);
+	  $jj = 0;
+	  for ($i = $row[1], $ii = $row[2]; $i <= $ii; $i++){
 		$tplIdx = $pdf->importPage($i);
 		if (0 == $row[3]){
 			$pdf->AddPage();
+			$jj++;
 			$pdf->useImportedPage($tplIdx, 10, 10, 200);
 		} else {
 			$pdf->AddPage('L');
+			$jj++;
 			$pdf->useImportedPage($tplIdx, 10, -2, 280);
 		}
-	}
+	  }
+          // pad out with empty pages
+	  if (0 == $row[3]){
+		$jtarget = ceil($jj/4) * 4;
+		} else {
+		$jtarget = ceil($jj/2) * 2;
+          }
+	  for ($i = $jj, $ii = $jtarget; $i < $ii; $i++){
+		if (0 == $row[3]){
+			$pdf->AddPage();
+       			$pdf->Write(5,"Blank on purpose \n");
+		} else {
+			$pdf->AddPage('L');
+       			$pdf->Write(5,"Blank on purpose \n");
+		}
+	  }
+
         }
 $this->conn->saveRequest($input);
 $yourFile =  'output/'. md5(time()) . 'myfile.pdf';

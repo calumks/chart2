@@ -444,6 +444,7 @@ if (isset($partName)){
 } else {
     $sqlCharts = "SELECT 1 from dual where false;";
 }
+//echo $sqlCharts;
 $pageCount=1;
 	$rowcount = 0;
     	foreach($this->conn->listMultiple( $sqlCharts ) AS $index=>$row ){
@@ -475,17 +476,36 @@ $this->arrangement->getAllNotes($pdf, $arrange);
 
     foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	$pdf->setSourceFile( $directoryBase .  "/" .  "pdf/" . $row[0]);
+	  $jj = 0;
 	for ($i = $row[1], $ii = $row[2]; $i <= $ii; $i++){
 		$tplIdx = $pdf->importPage($i);
 		if ( 0 == $row[3] ){
 			$pdf->AddPage();
+			$jj++;
 			$pdf->useImportedPage($tplIdx, 10, 10, 200);
 		} else {
 			$pdf->AddPage('L');
+			$jj++;
 			$pdf->useImportedPage($tplIdx, 10, -2, 280);
 		}
 		// use the imported page and place it at point 10,10 with a width of 200 mm
 	}
+          // pad out with empty pages
+	  if (0 == $row[3]){
+		$jtarget = ceil($jj/4) * 4;
+		} else {
+		$jtarget = ceil($jj/2) * 2;
+          }
+	  for ($i = $jj, $ii = $jtarget; $i < $ii; $i++){
+		if (0 == $row[3]){
+			$pdf->AddPage();
+       			$pdf->Write(5,"Blank on purpose \n");
+		} else {
+			$pdf->AddPage('L');
+       			$pdf->Write(5,"Blank on purpose \n");
+		}
+	  }
+
     }
 } else { // end if ($includeMusic)
 $pdf->Write(5,"\n(Notes and music excluded)\n");
