@@ -750,7 +750,14 @@ $pageCount = 1;
 	$pdf->AddPage();
 	$pdf->SetFont('Arial','',14);
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
- 	$pdf->Write(5,$pageCount . "  (" . $row[4] . ") ");
+// 	$pdf->Write(5,$pageCount . "  (" . $row[4] . ") ");
+		if (0 == $row[3]){
+ 	        $pdf->Write(5,"P");
+ 	      } else {
+ 	          $pdf->Write(5,"L");
+ 	      }
+ 	    $pdf->Write(5," ");
+ 	    $pdf->Write(5,"(" . $row[4] . ") ");
         $pdf->Write(5,$row[5] . "\n");
 	$pageCount = $pageCount + 1 + $row[2] - $row[1];
 	}
