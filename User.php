@@ -193,7 +193,7 @@ $sql = "SELECT userID from user where md5email = md5(trim(upper(' " . $email . "
 $sql = "INSERT into confirmation (userID, confirmationCode, ip) VALUES( " . $userID . ", '" . $md5now . "', '" . $this->conn->getIP() . "');";
 $result = $this->conn->my_execute( $sql);
 if ($result){
-	$msg = "To use the TSB chart printer please paste this address into your browser.\n  http://tsbchart.000webhostapp.com/?confirmation=" . $md5now;
+	$msg = "To use the TSB chart printer please paste this address into your browser.\n  http://tsbchart.com/?confirmation=" . $md5now;
 	$msg = wordwrap($msg, 70);
 	
 	$headers = 'Reply-To: ' . $this->getOneAdminEmail(). "\r\n" . 'Cc: ' .$this->getOneAdminEmail();

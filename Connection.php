@@ -33,6 +33,7 @@ function listMultiple($sql){
 
 include "mysql-cred.php";
 
+
 $link  = mysqli_connect( $servername, $username, $password, $database);
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());

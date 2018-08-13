@@ -16,12 +16,12 @@ $gig = new Gig();
 
 if (isset($_REQUEST['confirmation'])) {
 	$user->setValidCookie( $_REQUEST['confirmation'] );
-	header('Location: https://tsbchart.000webhostapp.com');
+	header('Location: http://tsbchart.com');
 } elseif (isset($_REQUEST['action'])) {
     if ( 'logout'==$_REQUEST['action']) {
         
 			$user->deleteCookie();
-	        header('Location: https://tsbchart.000webhostapp.com');
+	        header('Location: http://tsbchart.com');
     }
 	if ('storeEmail'==$_REQUEST['action']) {
 		if (!($user->storeEmail($_REQUEST['email']))){
@@ -43,6 +43,7 @@ if (isset($_REQUEST['confirmation'])) {
       <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
          <head>
           <title>TSB Printer</title>
+	  <link rel="stylesheet" type="text/css" href="mystyle.css">
         </head>
         <body>
 <?php 
