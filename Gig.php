@@ -272,6 +272,7 @@ if ($result){
 
 mysqli_close( $link );
 $form .= "<input type = 'checkbox' name='includeMusic' value='include' checked>Include Music";
+$form .= "<input type = 'checkbox' name='includeFiller' value='include' checked>Pad music with blank pages to print on A3";
 $form .= "<input type='submit' value='Get pdf of whole set'></form>";
 
 	$out = "<fieldset><legend>" . $this->getGigLabel($gigID) . "</legend>";
