@@ -393,11 +393,11 @@ return $form;
 }
 
 
-function getSetPartsOutput( $gigID, $directoryBase ){
+function getSetPartsOutput( $gigID, $directoryBase, $includeFiller=false ){
 
 $sql = "SELECT DISTINCT partName from view_efilePartSetList2 where gigID = " . $gigID . " ORDER BY partName ASC ";
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
-        		$this->pdfFromGigExplicit($gigID, $row[0], $directoryBase, "Gig" . $gigID . $row[0] );
+        		$this->pdfFromGigExplicit($gigID, $row[0], $includeFiller, $directoryBase, true, "Gig" . $gigID . $row[0] );
         		echo $row[0] . " ";
     	}
 
@@ -406,6 +406,11 @@ $sql = "SELECT DISTINCT partName from view_efilePartSetList2 where gigID = " . $
 
 function pdfFromGig( $input, $dummyGigID=-1, $dummyPart=-1){
     $includeMusic = false;
+if (isset($input['includeFiller'])){
+    if ( 'include' == $input['includeFiller']){
+        $includeFiller = true;
+    } 
+}    
 if (isset($input['includeMusic'])){
     if ( 'include' == $input['includeMusic']){
         $includeMusic = true;
@@ -414,11 +419,11 @@ if (isset($input['includeMusic'])){
 if (isset($input['gigID']) && isset($input['part'])){
     $this->deleteOutput( getcwd() );
     $this->conn->saveRequest($input);    
-    return $this->pdfFromGigExplicit($input['gigID'], $input['part'], getcwd(), $includeMusic );
+    return $this->pdfFromGigExplicit($input['gigID'], $input['part'], $includeFiller, getcwd(), $includeMusic );
 }
 }
 
-function pdfFromGigExplicit($gigID, $partName, $directoryBase, $includeMusic = true, $outputStem=''){
+function pdfFromGigExplicit($gigID, $partName, $includeFiller, $directoryBase, $includeMusic = true, $outputStem=''){
 
 $where="";
 $partWhere="";
@@ -496,6 +501,7 @@ $this->arrangement->getAllNotes($pdf, $arrange);
 		} else {
 		$jtarget = ceil($jj/2) * 2;
           }
+          if ($includeFiller){
 	  for ($i = $jj, $ii = $jtarget; $i < $ii; $i++){
 		if (0 == $row[3]){
 			$pdf->AddPage();
@@ -505,6 +511,7 @@ $this->arrangement->getAllNotes($pdf, $arrange);
        			$pdf->Write(5,"Blank on purpose \n");
 		}
 	  }
+          } // end if ($includeFiller){
 
     }
 } else { // end if ($includeMusic)
