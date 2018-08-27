@@ -272,6 +272,7 @@ if ($result){
 
 mysqli_close( $link );
 $form .= "<input type = 'checkbox' name='includeMusic' value='include' checked>Include Music";
+$form .= "<input type = 'checkbox' name='includeFiller' value='include' checked>Pad music with blank pages to print on A3";
 $form .= "<input type='submit' value='Get pdf of whole set'></form>";
 
 	$out = "<fieldset><legend>" . $this->getGigLabel($gigID) . "</legend>";
@@ -393,11 +394,11 @@ return $form;
 }
 
 
-function getSetPartsOutput( $gigID, $directoryBase ){
+function getSetPartsOutput( $gigID, $directoryBase, $includeFiller=false ){
 
 $sql = "SELECT DISTINCT partName from view_efilePartSetList2 where gigID = " . $gigID . " ORDER BY partName ASC ";
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
-        		$this->pdfFromGigExplicit($gigID, $row[0], $directoryBase, "Gig" . $gigID . $row[0] );
+        		$this->pdfFromGigExplicit($gigID, $row[0], $includeFiller, $directoryBase, true, "Gig" . $gigID . $row[0] );
         		echo $row[0] . " ";
     	}
 
@@ -406,6 +407,11 @@ $sql = "SELECT DISTINCT partName from view_efilePartSetList2 where gigID = " . $
 
 function pdfFromGig( $input, $dummyGigID=-1, $dummyPart=-1){
     $includeMusic = false;
+if (isset($input['includeFiller'])){
+    if ( 'include' == $input['includeFiller']){
+        $includeFiller = true;
+    } 
+}    
 if (isset($input['includeMusic'])){
     if ( 'include' == $input['includeMusic']){
         $includeMusic = true;
@@ -414,11 +420,11 @@ if (isset($input['includeMusic'])){
 if (isset($input['gigID']) && isset($input['part'])){
     $this->deleteOutput( getcwd() );
     $this->conn->saveRequest($input);    
-    return $this->pdfFromGigExplicit($input['gigID'], $input['part'], getcwd(), $includeMusic );
+    return $this->pdfFromGigExplicit($input['gigID'], $input['part'], $includeFiller, getcwd(), $includeMusic );
 }
 }
 
-function pdfFromGigExplicit($gigID, $partName, $directoryBase, $includeMusic = true, $outputStem=''){
+function pdfFromGigExplicit($gigID, $partName, $includeFiller, $directoryBase, $includeMusic = true, $outputStem=''){
 
 $where="";
 $partWhere="";
@@ -436,6 +442,35 @@ if (isset($partName)){
 $pdf = new Fpdi\Fpdi();
 
 $arrange = array();
+
+$pdf = new Fpdi\Fpdi();
+
+	$pdf->AddPage();
+	$pdf->SetFont('Arial','',14);
+    $sqlGig = "SELECT 'BLANL', g.name, g.gigDate FROM gig as g WHERE gigID=" . $gigID . ";";
+    	foreach( $this->conn->listMultiple( $sqlGig ) AS $index=>$row ){
+	$pdf->SetFont('Arial','',14);
+            $pdf->Write(5,$row[1] . " " . $row[2] . "\n\n\n");
+        }
+    $sql = "SELECT DISTINCTROW fileName, startPage, endPage, formatID, setListOrder, partName, V.name, V.arrangementID FROM view_efilePartSetList2 as g INNER JOIN view_arrangement AS V on V.arrangementID = g.arrangementID WHERE  ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) " . $orderByFile . ";";
+//echo $sql;
+//$pageCount = 1;
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
+// 	$pdf->Write(5,$pageCount . "  (" . $row[4] . ") ");
+		if (0 == $row[3]){
+ 	        $pdf->Write(5,"P");
+ 	      } else {
+ 	          $pdf->Write(5,"L");
+ 	      }
+ 	    $pdf->Write(5," ");
+ 	    $pdf->Write(5,"(" . $row[5] . ") ");
+        $pdf->Write(5,$row[6] . "\n");
+	$arrange[] = $row[7];
+//	$pageCount = $pageCount + 1 + $row[2] - $row[1];
+	}
+
+
+/*
 if (isset($partName)){
     $sqlCharts = "SELECT DISTINCTROW IF(AC.arrCount>1, CONCAT(S.name, ', ', VA.arrangerFirstName, ' ', VA.arrangerLastName), S.name) as songName, g.name, g.gigDate, c.countParts, v.arrangementID, XXX.countPages " . $distinctOrder . " FROM (setList2 as v INNER JOIN arrangement AS A on v.arrangementID=A.arrangementID INNER JOIN song as S on S.songID = A.songID 
     INNER JOIN view_arrangement AS VA on VA.arrangementID = A.arrangementID
@@ -469,6 +504,7 @@ $pageCount=1;
 	}
         $rowcount++;
 	}
+*/
 if ($includeMusic){
 $this->arrangement->getAllNotes($pdf, $arrange);
 
@@ -496,6 +532,7 @@ $this->arrangement->getAllNotes($pdf, $arrange);
 		} else {
 		$jtarget = ceil($jj/2) * 2;
           }
+          if ($includeFiller){
 	  for ($i = $jj, $ii = $jtarget; $i < $ii; $i++){
 		if (0 == $row[3]){
 			$pdf->AddPage();
@@ -505,6 +542,7 @@ $this->arrangement->getAllNotes($pdf, $arrange);
        			$pdf->Write(5,"Blank on purpose \n");
 		}
 	  }
+          } // end if ($includeFiller){
 
     }
 } else { // end if ($includeMusic)
