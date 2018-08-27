@@ -442,6 +442,35 @@ if (isset($partName)){
 $pdf = new Fpdi\Fpdi();
 
 $arrange = array();
+
+$pdf = new Fpdi\Fpdi();
+
+	$pdf->AddPage();
+	$pdf->SetFont('Arial','',14);
+    $sqlGig = "SELECT 'BLANL', g.name, g.gigDate FROM gig as g WHERE gigID=" . $gigID . ";";
+    	foreach( $this->conn->listMultiple( $sqlGig ) AS $index=>$row ){
+	$pdf->SetFont('Arial','',14);
+            $pdf->Write(5,$row[1] . " " . $row[2] . "\n\n\n");
+        }
+    $sql = "SELECT DISTINCTROW fileName, startPage, endPage, formatID, setListOrder, partName, V.name, V.arrangementID FROM view_efilePartSetList2 as g INNER JOIN view_arrangement AS V on V.arrangementID = g.arrangementID WHERE  ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) " . $orderByFile . ";";
+//echo $sql;
+//$pageCount = 1;
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
+// 	$pdf->Write(5,$pageCount . "  (" . $row[4] . ") ");
+		if (0 == $row[3]){
+ 	        $pdf->Write(5,"P");
+ 	      } else {
+ 	          $pdf->Write(5,"L");
+ 	      }
+ 	    $pdf->Write(5," ");
+ 	    $pdf->Write(5,"(" . $row[5] . ") ");
+        $pdf->Write(5,$row[6] . "\n");
+	$arrange[] = $row[7];
+//	$pageCount = $pageCount + 1 + $row[2] - $row[1];
+	}
+
+
+/*
 if (isset($partName)){
     $sqlCharts = "SELECT DISTINCTROW IF(AC.arrCount>1, CONCAT(S.name, ', ', VA.arrangerFirstName, ' ', VA.arrangerLastName), S.name) as songName, g.name, g.gigDate, c.countParts, v.arrangementID, XXX.countPages " . $distinctOrder . " FROM (setList2 as v INNER JOIN arrangement AS A on v.arrangementID=A.arrangementID INNER JOIN song as S on S.songID = A.songID 
     INNER JOIN view_arrangement AS VA on VA.arrangementID = A.arrangementID
@@ -475,6 +504,7 @@ $pageCount=1;
 	}
         $rowcount++;
 	}
+*/
 if ($includeMusic){
 $this->arrangement->getAllNotes($pdf, $arrange);
 
