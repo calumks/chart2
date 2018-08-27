@@ -145,7 +145,18 @@ if ($result){
     	}
 }
 
-$form = "<fieldset><legend>" . $songName . "</legend>\n" . $form . "</fieldset>\n"; 
+$sql = "SELECT gigID, name, gigDate from gig WHERE gigID in (SELECT gigID FROM setList2 WHERE arrangementID =" . $arrangementID . ") ORDER BY gigDate DESC  ";
+$result = mysqli_query($link, $sql);
+if ($result){
+	$olist = "<div>Listed in:<ol>"; $li="";
+    	while($row = mysqli_fetch_row( $result )) {
+	        $li = "<a href='.?action=getGig&gigID= " . $row[0] . "'>"  . $row[2] . " " . $row[1] . "</a>\n";
+		$olist .= "<li>". $li . "</li>\n";
+    	}
+	$olist .="</ol></div>";
+}
+
+$form = "<fieldset><legend>" . $songName . "</legend>\n" . $form . $olist . "</fieldset>\n"; 
 return $form;
 }
 
