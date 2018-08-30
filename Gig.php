@@ -286,10 +286,10 @@ $form .= "<input type='hidden' name='action' value='changeGig' />";
 
 $sql = "SELECT gigID, name, gigDate FROM gig WHERE (includesAll IS NULL OR includesAll!=1) ORDER BY gigDate DESC";
 $result = mysqli_query($link, $sql);
+$sform = "";
 if ($result){
         $i = 1;
 	$form .= "<p><select name='gigID'>";
-	$sform = "";
     	while($row = mysqli_fetch_row( $result )) {
     	    if ($gigID==$row[0]){
     	        $selected = " selected ";
