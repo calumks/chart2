@@ -209,7 +209,7 @@ $form = "<fieldset><legend>Get set to edit</legend><form action = '' method='GET
 $form .= "<input type='hidden' name='action' value='getSetList' />";
 $form .= "<p><select name='gigID'>";
 
-$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig WHERE (includesAll IS NULL OR includesAll!=1) AND (baseGigID IS NULL or baseGigID<1)  ORDER BY gigDate DESC, name ASC";
+$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig WHERE (includesAll IS NULL OR includesAll!=1)  ORDER BY gigDate DESC, name ASC";
 	$i = 1;
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
     	    if(11!=$row[0]){
