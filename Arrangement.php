@@ -145,7 +145,7 @@ if ($result){
     	}
 }
 
-$sql = "SELECT gigID, name, gigDate from gig WHERE gigID in (SELECT gigID FROM setList2 WHERE arrangementID =" . $arrangementID . ") AND isGIG=1 ORDER BY gigDate DESC  ";
+$sql = "SELECT gigID, name, gigDate from gig WHERE gigID in (SELECT gigID FROM setList2 WHERE arrangementID =" . $arrangementID . ")  ORDER BY gigDate DESC  ";
 $result = mysqli_query($link, $sql);
 if ($result){
 	$olist = "<div>Listed in:<ol>"; $li="";

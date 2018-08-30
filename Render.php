@@ -36,12 +36,12 @@ function getOutputLink( $filename ){
 	}
 
 
-function getRequestForm( $arrangementID = -1, $gigID = -1){
+function getRequestForm( $arrangementID = -1, $gigID = -1, $input=array()){
 	$out = "";
 	if ($arrangementID > 0){
 	    $out .= $this->arrangement->getArrangementForm($arrangementID);
 	}
-	$out .= $this->gig->getGigForm( $gigID);
+	$out .= $this->gig->getGigForm( $gigID, $input);
 	$out .= "<fieldset><legend>Alphabetical order (* = not in pads)</legend>";
 	$out .= $this->gig->getForm( $gigID);
 	$out .= "</fieldset>";
