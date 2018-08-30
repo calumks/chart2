@@ -91,6 +91,8 @@ function getChartsForGig( $gigID = -1, $input=array()){
         $gigID = $this->getLatestGigID();
     }
     // get features (if any) of virtualGig
+
+    $includesAll = "";
     $sqlV = "SELECT includesAll FROM gig WHERE gig.gigID=" . $gigID; 
     foreach ($this->conn->listMultiple($sqlV) AS $count=>$res){
     	$includesAll = $res[0];
