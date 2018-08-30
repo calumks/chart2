@@ -63,28 +63,30 @@ if ($user->hasValidCookie()){
 	        if (isset($_GET['partID'])) {
 			echo $render->getOutputLink( $arrangement->listAll($_GET['partID']) );
 	        }
-			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 			echo $render->getFooter();
 			exit();
 	       
 		} elseif ( 'getChart'==$_GET['action']) {
 			echo $render->getOutputLink( $arrangement->pdfFromGet($_GET) );
-			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 			echo $render->getFooter();
 			exit();
 		} elseif ( 'getGig'==$_GET['action']) {
 			echo $render->getOutputLink( $gig->pdfFromGig($_GET) );
-			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 			echo $render->getFooter();
 			exit();
 		} else {
-			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 			echo $render->getFooter();
+echo "<pre>" . print_r($_GET,1) . "</pre>"; 
 			exit();
 		}
 	} else {
-			echo $render->getRequestForm($arrangementID, $gigID);
+			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 		echo $render->getFooter();
+echo "<pre>" . print_r($_GET,1) . "</pre>"; 
 			exit();
 	}
 } else {
@@ -94,5 +96,6 @@ if ($user->hasValidCookie()){
 }
 
 ?>
+
 </body>
 </html>

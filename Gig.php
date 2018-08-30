@@ -21,6 +21,28 @@ function addToSet( $gigID, $order, $arrangementID){
  
 }
 
+function arrangementsInGig( $gigID ){
+    $arr = array();
+    $sqlV = "SELECT arrangementID FROM setList2 where gigID = " . $gigID;
+    foreach ($this->conn->listMultiple($sqlV) AS $count=>$res){
+    	$arr[] = $res[0];
+    }
+    return $arr;
+}
+
+function arrayToList( $arr, $dud=-1 ){
+    $list = "(";
+    foreach ($arr AS $count=>$res){
+    	$list .=  $res . ", ";
+    }
+    $list .= $dud . ")";
+    return $list;
+}
+
+function arrInGigList( $gigID ){
+	return $this->arrayToList( $this->arrangementsInGig( $gigID ));
+}
+
 function copySetList( $sourceGigID, $targetGigID){
 
 $sqlDeleteSetList = "DELETE FROM setList2 WHERE gigID = " . $targetGigID;
@@ -63,14 +85,44 @@ function deleteSetListPart( $setListID){
 }
 
 
-function getChartsForGig( $gigID = -1){
+function getChartsForGig( $gigID = -1, $input=array()){
     $return = "";
     if ($gigID < 1){
         $gigID = $this->getLatestGigID();
     }
-    $sql = "SELECT T.setListID, T.setListOrder, V.name, V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), AC.arrCount, IF(AC.arrCount>1, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), V.name), A.isBackedUp FROM setList2 AS T, view_arrangement AS V, (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC, arrangement AS A WHERE AC.songID = A.songID AND A.arrangementID = V.arrangementID AND T.arrangementID = V.arrangementID AND T.gigID = " . $gigID . " order by T.setListOrder ASC";
+    // get features (if any) of virtualGig
+    $sqlV = "SELECT includesAll FROM gig WHERE gig.gigID=" . $gigID; 
+    foreach ($this->conn->listMultiple($sqlV) AS $count=>$res){
+    	$includesAll = $res[0];
+    }
+    
+    $whereFilter = " 1  ";
+    $labelFilter = "";
+    if (isset($input['filter'])){
+    	foreach ($input['filter'] AS $count=>$res){
+		if (1==$res){
+			$conj = " IN ";
+		} else {
+			$conj = " NOT IN ";
+		}
+    		if (isset($input['filterGig'][$count])){
+			$whereFilter .= " AND  V.arrangementID " . $conj . $this->arrInGigList($input['filterGig'][$count]) ;
+			$labelFilter .= " AND " . $conj . " " . $this->getGigLabel($input['filterGig'][$count]) . " ";
+		}
+	}
+    }
+
+	if (1==$includesAll){
+		$whereGig = "1 " ;
+	} else {
+		$whereGig = "T.gigID = " . $gigID;
+	}
+
+    $sql = "SELECT DISTINCTROW T.setListID, T.setListOrder, V.name, V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), AC.arrCount, IF(AC.arrCount>1, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), V.name), A.isBackedUp FROM setList2 AS T, view_arrangement AS V, (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC, arrangement AS A WHERE AC.songID = A.songID AND A.arrangementID = V.arrangementID AND T.arrangementID = V.arrangementID AND " . $whereGig . " AND " . $whereFilter . " order by T.setListOrder ASC";
+//    echo $sql;
  $i = 1;
-    $return = "<ol>";
+    $return = "<p>" . $labelFilter . "</p>";
+    $return.= "<ol>";
     foreach ($this->conn->listMultiple($sql) AS $count=>$res){
         $label = $res[6];
         $label2 = "";
@@ -155,7 +207,7 @@ $form = "<fieldset><legend>Get set to edit</legend><form action = '' method='GET
 $form .= "<input type='hidden' name='action' value='getSetList' />";
 $form .= "<p><select name='gigID'>";
 
-$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig ORDER BY gigDate DESC, name ASC";
+$sql = "SELECT DISTINCT gigID, name, gigDate FROM gig WHERE (includesAll IS NULL OR includesAll!=1) AND (baseGigID IS NULL or baseGigID<1)  ORDER BY gigDate DESC, name ASC";
 	$i = 1;
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
     	    if(11!=$row[0]){
@@ -214,7 +266,7 @@ return $form;
 }
 
 
-function getGigForm( $gigID = -1){
+function getGigForm( $gigID = -1, $input=array()){
 
 
     if ($gigID < 1){
@@ -230,11 +282,12 @@ if (mysqli_connect_errno()) {
 $form = "<form action = '' method='GET'>";
 $form .= "<input type='hidden' name='action' value='changeGig' />";
 
-$sql = "SELECT gigID, name, gigDate FROM gig ORDER BY gigDate DESC";
+$sql = "SELECT gigID, name, gigDate FROM gig WHERE (includesAll IS NULL OR includesAll!=1) ORDER BY gigDate DESC";
 $result = mysqli_query($link, $sql);
 if ($result){
         $i = 1;
 	$form .= "<p><select name='gigID'>";
+	$sform = "";
     	while($row = mysqli_fetch_row( $result )) {
     	    if ($gigID==$row[0]){
     	        $selected = " selected ";
@@ -243,13 +296,29 @@ if ($result){
     	    }
 		$check = "<option value='" . $row[0] . "'" . $selected . ">" . $row[1] . " "  . ". " . $row[2] . "</option>";
 		$form = $form . $check;
+		$sform .= $check;
                 $i++;
     	}
 	$form .= "</select>";
 }
 $form .= "<input type='submit' value='Change gig'></form>";
 
-$form .= $this->getChartsForGig( $gigID);
+$form .= $this->getChartsForGig( $gigID, $input);
+
+$fform = "<form action = '' method='GET'>";
+$fform .= "<input type='hidden' name='gigID' value='" . $gigID . "' />";
+if (isset($input['action'])){
+	$fform .= "<input type='hidden' name='action' value='" . $input['action'] . "' />";
+}
+$fform .= $this->getHidden($input, 'filter','filterGig');
+$fform .= "<input type='radio' name='filter[]' value='1' checked> In<br>";
+$fform .= "<input type='radio' name='filter[]' value='0' checked> Not in<br>";
+$fform .= "<select name='filterGig[]'>";
+$fform .= $sform;
+$fform .= "</select>";
+$fform .= "<input type='submit' value='Add filter'></form>";
+$form .= $fform;
+
 
 $form .= "<form action = '' method='GET'>";
 $form .= "<input type='hidden' name='action' value='getGig' />";
@@ -272,6 +341,7 @@ if ($result){
 
 mysqli_close( $link );
 $form .= "<input type = 'checkbox' name='includeMusic' value='include' checked>Include Music";
+$form .= $this->getHidden($input, 'filter','filterGig');
 $form .= "<input type = 'checkbox' name='includeFiller' value='include' checked>Pad music with blank pages to print on A3";
 $form .= "<input type='submit' value='Get pdf of whole set'></form>";
 
@@ -353,6 +423,19 @@ function getGigSetForm($gigID){
 }
 
 
+function getHidden( $input=array(), $firstKey, $secondKey){
+    $return = "";
+    if (isset($input[$firstKey])){
+    	foreach ($input[$firstKey] AS $count=>$res){
+		if (isset($input[$secondKey][$count])){
+			$return .= "<input type='hidden' name='" . $firstKey . "[]', value='" . $input[$firstKey][$count] . "'>";
+			$return .= "<input type='hidden' name='" . $secondKey . "[]', value='" . $input[$secondKey][$count] . "'>";
+		}
+	}
+    }
+     return $return;
+}
+
 function getLatestGigID(){
     foreach ($this->conn->listMultiple("SELECT gigID from gig ORDER BY gigDate DESC LIMIT 1") AS $count=>$res){
         return $res[0];
@@ -420,12 +503,24 @@ if (isset($input['includeMusic'])){
 if (isset($input['gigID']) && isset($input['part'])){
     $this->deleteOutput( getcwd() );
     $this->conn->saveRequest($input);    
-    return $this->pdfFromGigExplicit($input['gigID'], $input['part'], $includeFiller, getcwd(), $includeMusic );
+    return $this->pdfFromGigExplicit($input, getcwd() );
 }
 }
 
-function pdfFromGigExplicit($gigID, $partName, $includeFiller, $directoryBase, $includeMusic = true, $outputStem=''){
+private function pdfFromGigExplicit($input, $directoryBase, $outputStem=''){
 
+    $gigID = $input['gigID'];
+    $partName = $input['part'];
+if (isset($input['includeFiller'])){
+    if ( 'include' == $input['includeFiller']){
+        $includeFiller = true;
+    } 
+}    
+if (isset($input['includeMusic'])){
+    if ( 'include' == $input['includeMusic']){
+        $includeMusic = true;
+    } 
+}    
 $where="";
 $partWhere="";
 $distinctOrder = " ,v.setListOrder ";
@@ -438,6 +533,36 @@ if (isset($partName)){
     $partWhere .= " OR partName='" . $partName . "' ";
 }
 
+    $sqlV = "SELECT includesAll FROM gig WHERE gig.gigID=" . $gigID; 
+    foreach ($this->conn->listMultiple($sqlV) AS $count=>$res){
+    	$includesAll = $res[0];
+    }
+    
+    $whereFilter = " 1  ";
+    $labelFilter = "";
+    if (isset($input['filter'])){
+    	foreach ($input['filter'] AS $count=>$res){
+		if (1==$res){
+			$conj = " IN ";
+		} else {
+			$conj = " NOT IN ";
+		}
+    		if (isset($input['filterGig'][$count])){
+			$whereFilter .= " AND  g.arrangementID " . $conj . $this->arrInGigList($input['filterGig'][$count]) ;
+			$labelFilter .= " AND " . $conj . " " . $this->getGigLabel($input['filterGig'][$count]) . " ";
+		}
+	}
+    }
+
+	if (1==$includesAll){
+		$whereGig = "1 " ;
+	} else {
+		$whereGig = "g.gigID = " . $gigID;
+	}
+
+//    echo $sql;
+ $i = 1;
+    $return = "<p>" . $labelFilter . "</p>";
 
 $pdf = new Fpdi\Fpdi();
 
@@ -452,9 +577,14 @@ $pdf = new Fpdi\Fpdi();
 	$pdf->SetFont('Arial','',14);
             $pdf->Write(5,$row[1] . " " . $row[2] . "\n\n\n");
         }
-    $sql = "SELECT DISTINCTROW fileName, startPage, endPage, formatID, setListOrder, partName, V.name, V.arrangementID FROM view_efilePartSetList2 as g INNER JOIN view_arrangement AS V on V.arrangementID = g.arrangementID WHERE  ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) " . $orderByFile . ";";
+//:w
+$sql = "SELECT DISTINCTROW fileName, startPage, endPage, formatID, setListOrder, partName, V.name, V.arrangementID FROM view_efilePartSetList2 as g INNER JOIN view_arrangement AS V on V.arrangementID = g.arrangementID WHERE  ( 0 " . $partWhere . ") AND ( 0 OR " . $whereGig . " )   AND " . $whereFilter .  $orderByFile . ";";
 //echo $sql;
 //$pageCount = 1;
+ 	if (strlen($labelFilter) > 0 ){
+		$pdf->Write(5,$labelFilter);
+ 	    	$pdf->Write(5,"\n\n");
+		}
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 // 	$pdf->Write(5,$pageCount . "  (" . $row[4] . ") ");
 		if (0 == $row[3]){
@@ -508,8 +638,8 @@ $pageCount=1;
 if ($includeMusic){
 $this->arrangement->getAllNotes($pdf, $arrange);
 
-    $sql = "SELECT DISTINCTROW fileName, startPage, endPage, formatID, setListOrder FROM view_efilePartSetList2 as g WHERE  ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) " . $orderByFile . ";";
-
+    $sql = "SELECT DISTINCTROW fileName, startPage, endPage, formatID, setListOrder FROM view_efilePartSetList2 as g WHERE  ( 0 " . $partWhere . ") AND ( 0 OR " . $whereGig . " )   AND " . $whereFilter .  $orderByFile . ";";
+//echo $sql;
     foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
 	$pdf->setSourceFile( $directoryBase .  "/" .  "pdf/" . $row[0]);
 	  $jj = 0;
