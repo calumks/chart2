@@ -13,6 +13,8 @@ private $arrangement;
 function getFooter(){
 
 $form = "<p>Any bugs, please let Owen know at a rehearsal, or create an issue at  <a href='https://github.com/owen-kellie-smith/chart2'>Github</a>.</p>";
+$form .= "<p><a href='webcal://tsbchart.com/cal5.ics.php'>Subscribe to gig list as calendar</a></p>";
+$form .= "<p><a href='cal5.ics.php'>Get gig list as calendar events</a></p>";
 $form .= "<p><a href='.'>Main menu</a></p>";
 $form .= "<p><a href='.?action=logout'>Logout</a></p>";
 $form .= "<p>If you want to print an A3 landscape pdf onto to 2 A4 portrait pages, here's one way that worked in June 2018. 
@@ -20,6 +22,7 @@ $form .= "<p>If you want to print an A3 landscape pdf onto to 2 A4 portrait page
 <li>Upload one of the separate A3 pages <a href='https://www.sejda.com/split-pdf-down-the-middle'>www.sejda.com</a>. Click on Upload pdf files, then when it's uploaded (took a minute on my machine) click on split vertically.  Sejda lets you split 3 times in an hour for free.</li></ol></p>";
 $form .= "<div>
             <strong>Other links</strong>
+
           <p><a href='http://thornburyswingband.weebly.com/'>Thornbury Swing Band website</a></p>
             <p><a href='https://padlet.com/andyh/TSB_Tunes'>TSB_Tunes (Andy's padlet)</a></p>
           <p><a href='https://www.youtube.com/channel/UCX2K1BCZ6PR3AsjbFsi88og'>You tube (Thornbury Swing Band)</a></p>

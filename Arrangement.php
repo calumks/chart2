@@ -110,6 +110,27 @@ $sqlCharts = "SELECT name, description, noteText, date_format(noteDate, '%Y-%m-%
 return $pdf;
 }
 
+function getArrangementStyleForm( $arrangementID ){
+
+$form = "<fieldset><form action='' method = 'POST'>";
+$sql = "SELECT G.name, C.countStyle, G.gigID FROM gig as G LEFT  JOIN (SELECT Count(*) as countStyle, gigID FROM setList2 WHERE arrangementID = " . $arrangementID . " GROUP BY gigID) AS C ON C.gigID = G.gigID WHERE G.isStyle=1  ORDER BY G.name ASC";
+//echo $sql;
+    	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
+	    $form .= "<p>";
+            $form .= "<input type='checkbox' name='gigStyle[]' value='" . $row[2] . "' ";
+	    if ($row[1] > 0){
+	    $form .= " checked ";
+	    }
+	    $form .= ">" . $row[0];
+	    $form .= "</p>";
+	}
+	$form .= "<input type='hidden' name='arrangementID' value='" . $arrangementID . "'>";
+	$form .= "<input type='hidden' name='action' value='updateStyle'>";
+	$form .= "<input type='submit' value='Update style'>";
+	$form .= "</form>";
+	$form .= "</fieldset>";
+	return $form;
+}
 
 function getArrangementForm( $arrangementID){
 
@@ -132,6 +153,7 @@ if ($result){
 }
 
 $form .= $noteText;
+$form .= "<p><a href=./maintenance/?arrangementID=" . $arrangementID . "&action=getNotes>Edit notes</a></p>";
 
 $sql = "SELECT DISTINCTROW P.partID, P.name as partName, song.name, VA.arrangerFirstName, VA.arrangerLastName from efilePart as EF INNER JOIN efile as E on E.efileID = EF.efileID INNER JOIN publication as PUB on E.publicationID = PUB.publicationID INNER JOIN arrangement as A on A.arrangementID = PUB.arrangementID INNER JOIN view_arrangement AS VA ON VA.arrangementID = A.arrangementID INNER JOIN song ON song.songID = A.songID INNER JOIN part as P ON EF.partID = P.partID inner join section as S on S.sectionID = P.minSectionID WHERE A.arrangementID=" . $arrangementID . " ORDER BY S.printOrder ASC, P.partID ASC ";
 $result = mysqli_query($link, $sql);
@@ -156,7 +178,7 @@ if ($result){
 	$olist .="</ol></div>";
 }
 
-$form = "<fieldset><legend>" . $songName . "</legend>\n" . $form . $olist . "</fieldset>\n"; 
+$form = "<fieldset><legend>" . $songName . "</legend>\n" . $form . $olist . $this->getArrangementStyleForm( $arrangementID ) . "</fieldset>\n"; 
 return $form;
 }
 
@@ -193,9 +215,16 @@ return $form;
 }
 
 
-function getEditNoteForm(){
+function getEditNoteForm( $input=array()){
+$where = " AND 1 ";
+if (isset($input['arrangementID'])){
+	if ($input['arrangementID'] > 0){
+		$where .= " AND V.arrangementID = " . $input['arrangementID'] . " ";
+	}
+}
+
 $form = "";
-$sqlCharts = "SELECT N.noteID, V.name, V.description, N.noteText, date_format(N.noteDate, '%Y-%m-%d'), N.publicationID FROM note as N, view_publication as V WHERE V.publicationID=N.publicationID  ORDER BY name ASC, noteDate DESC"; 
+$sqlCharts = "SELECT N.noteID, V.name, V.description, N.noteText, date_format(N.noteDate, '%Y-%m-%d'), N.publicationID FROM note as N, view_publication as V WHERE V.publicationID=N.publicationID " . $where . " ORDER BY name ASC, noteDate DESC"; 
     	foreach( $this->conn->listMultiple( $sqlCharts ) AS $index=>$row ){
             $form .= "<div>";
             $form .= "<fieldset><legend>" . $row[1] . " " . $row[2] . " " . $row[4] . "</legend>";
@@ -271,14 +300,24 @@ function getFormPads( $arrID, $isInPads, $arrLabel){
 }
 
 
-function getNewNoteForm(){
+function getNewNoteForm( $input=array()){
+$where = " WHERE 1 ";
+if (isset($input['arrangementID'])){
+	if ($input['arrangementID'] > 0){
+		$where .= " AND V.arrangementID = " . $input['arrangementID'] . " ";
+	}
+}
+
 $form = "";
-$sqlCharts = "SELECT V.publicationID, V.name, V.description FROM view_publication as V  ORDER BY V.name ASC"; 
+$sqlCharts = "SELECT V.publicationID, V.name, V.description FROM view_publication as V " . $where . " ORDER BY V.name ASC"; 
+//echo $sqlCharts;
             $form .= "<div>";
             $form .= "<fieldset><legend>New note</legend>";
             $form .= "<form method='POST' action=''>";
             $form .= "<select name='publicationID'>";
+	if (!isset($input['arrangementID'])){
             $form .= "<option value='-1'></option>";
+	}
     	foreach( $this->conn->listMultiple( $sqlCharts ) AS $index=>$row ){
 
             $form .= "<option value='". $row[0] . "'>" . $row[1] . " " . $row[2] . "</option>";
@@ -813,6 +852,18 @@ $pdf->Output(getcwd() . "/" . $yourFile,'F');
 return $yourFile;
 }
 
+function postStyle( $input ){
+	if (isset( $input['arrangementID']) ){
+		$sqlD = "DELETE FROM setList2 WHERE gigID IN (SELECT gigID FROM gig WHERE isStyle=1)  AND arrangementID=" . trim($input['arrangementID']) . "";
+		$result = $this->conn->my_execute( $sqlD);
+		}
+	if (isset( $input['arrangementID']) && isset( $input['gigStyle'] )){
+	foreach ($input['gigStyle'] AS $index=>$gigID){
+		$sqlI = "INSERT INTO setList2 (arrangementID, gigID, setListOrder) select " . trim($input['arrangementID']) . ", " . $gigID . ", 1 + MAX(setListOrder) from setList2 where gigID=" . $gigID . "";
+		$result = $this->conn->my_execute( $sqlI);
+	}
+}
+}
 
 function postNewPerson($person=array()){
 

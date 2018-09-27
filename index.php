@@ -1,5 +1,29 @@
 <?php
+
+$bShowEmailForm = true;
+include_once "include_refsC.php";
+$user = new User();
+$render = new Render();
+$arrangement = new Arrangement();
+$gig = new Gig();
 // https://stackoverflow.com/questions/1907653/how-to-force-page-not-to-be-cached-in-php
+if ($_POST){
+if ($user->hasValidCookie()){
+if (isset($_POST['action'])){
+    if ('updateStyle'==$_POST['action']){
+            $arrangement->postStyle($_POST);
+    }
+
+}
+header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP/1.1
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+header("Pragma: no-cache"); // HTTP/1.0
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+header("Location: " . $_SERVER['REQUEST_URI']);
+exit();
+}
+}
 header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP/1.1
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
@@ -80,13 +104,16 @@ if ($user->hasValidCookie()){
 		} else {
 			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 			echo $render->getFooter();
+echo "<pre> GET" . print_r($_GET,1) . "</pre>"; 
+echo "<pre> POST" . print_r($_POST,1) . "</pre>"; 
 echo "<pre>" . print_r($_GET,1) . "</pre>"; 
 			exit();
 		}
 	} else {
 			echo $render->getRequestForm($arrangementID, $gigID, $_GET);
 		echo $render->getFooter();
-echo "<pre>" . print_r($_GET,1) . "</pre>"; 
+echo "<pre> GET" . print_r($_GET,1) . "</pre>"; 
+echo "<pre> POST" . print_r($_POST,1) . "</pre>"; 
 			exit();
 	}
 } else {
