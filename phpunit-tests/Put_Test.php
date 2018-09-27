@@ -81,7 +81,7 @@ class Put_Test extends PHPUnit_Framework_TestCase
 }
 
   public function test_postNewSetList(){
-	$_in = array('isGig'=>'isPublic','gigName'=>'A good name');
+	$_in = array('isGig'=>'isPublic','gigName'=>'A good name', 'gigDate'=>'2018-09-01');
         $this->g->postNewSetList($_in);
 }
 
