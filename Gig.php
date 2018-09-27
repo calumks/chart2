@@ -204,6 +204,7 @@ function getChartsForGig( $gigID = -1, $input=array()){
 
 
 function getCopySetForm(){
+$counter = 0;
 
 $sqlCountTargets = "SELECT COUNT(*) FROM (SELECT gig.gigID, COALESCE(S.countCharts,0) AS counter FROM gig LEFT JOIN (SELECT COUNT(*) as countCharts, gigID from setList2 GROUP BY gigID) AS S ON S.gigID=gig.gigID WHERE ( hasWhere IS NULL OR hasWhere!=1) AND ( includesAll IS NULL OR includesAll!=1) AND COALESCE(S.countCharts,0)=0) AS C";
     	foreach( $this->conn->listMultiple( $sqlCountTargets ) AS $index=>$row ){
