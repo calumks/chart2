@@ -178,6 +178,7 @@ function getChartsForGig( $gigID = -1, $input=array()){
 	if (1==$includesAll){
 		$whereGig = "1 " ;
     		$orderHow = "V.name ASC";
+    		$sql = "SELECT DISTINCTROW 'unnecessary T.setListID', 'unnecessary T.setListOrder', V.name, V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), AC.arrCount, IF(AC.arrCount>1, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), V.name), A.isBackedUp FROM view_arrangement AS V, (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC, arrangement AS A WHERE AC.songID = A.songID AND A.arrangementID = V.arrangementID AND " . $whereGig . " AND " . $whereFilter . " order by " . $orderHow;
 	} elseif (1==$hasWhere){
 		$whereGig = "T.gigID IN (SELECT gigID FROM gig WHERE " . $whereText . ") " ;
     		$orderHow = "V.name ASC";
@@ -190,8 +191,9 @@ function getChartsForGig( $gigID = -1, $input=array()){
 	}
 
 //    $sql = "SELECT DISTINCTROW T.setListID, T.setListOrder, V.name, V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), AC.arrCount, IF(AC.arrCount>1, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), V.name), A.isBackedUp FROM setList2 AS T, view_arrangement AS V, (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC, arrangement AS A WHERE AC.songID = A.songID AND A.arrangementID = V.arrangementID AND T.arrangementID = V.arrangementID AND " . $whereGig . " AND " . $whereFilter . " order by " . $orderHow;
+	if (1!=$includesAll){
     $sql = "SELECT DISTINCTROW 'unnecessary T.setListID', 'unnecessary T.setListOrder', V.name, V.arrangementID, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), AC.arrCount, IF(AC.arrCount>1, CONCAT(V.name, ', ', V.arrangerFirstName, ' ', V.arrangerLastName), V.name), A.isBackedUp FROM setList2 AS T, view_arrangement AS V, (SELECT COUNT(*) as arrCount, songID FROM arrangement AS A GROUP BY songID) AS AC, arrangement AS A WHERE AC.songID = A.songID AND A.arrangementID = V.arrangementID AND T.arrangementID = V.arrangementID AND " . $whereGig . " AND " . $whereFilter . " order by " . $orderHow;
-
+}
 //    echo $sql;
  $i = 1;
     $return = "<p>" . $labelFilter . "</p>";
@@ -603,9 +605,17 @@ return $form;
 
 function getSetPartsOutput( $gigID, $directoryBase, $includeFiller=false ){
 
+$this->deleteOutput($directoryBase);
+
 $sql = "SELECT DISTINCT partName from view_efilePartSetList2 where gigID = " . $gigID . " ORDER BY partName ASC ";
     	foreach( $this->conn->listMultiple( $sql ) AS $index=>$row ){
-        		$this->pdfFromGigExplicit($gigID, $row[0], $includeFiller, $directoryBase, true, "Gig" . $gigID . $row[0] );
+//	echo $directoryBase;
+         $inp = array();
+	 $inp['gigID'] = $gigID;
+	 $inp['part'] = $row[0];
+	 $inp['includeFiller'] = $includeFiller;
+	 $inp['includeMusic'] = 'include';
+         		$this->pdfFromGigExplicit($inp, $directoryBase, "Gig" . $gigID . $row[0] );
         		echo $row[0] . " ";
     	}
 
