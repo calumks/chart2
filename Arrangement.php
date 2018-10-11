@@ -777,6 +777,10 @@ if (isset($input['chart'])){
       $where .= " OR V.efileID='" . $value . "' ";
    }
 }
+$padding = true;
+if (isset($input['noPad'])){
+	$padding = false;
+}
 if (isset($input['part'])){
     foreach ($input['part'] AS $index=>$value){
       $partWhere .= " OR P.partID='" . $value . "' ";
@@ -793,7 +797,7 @@ if (isset($input['arrangement'])){
 $arrangeWhere .=")))";
 $where .=   $arrangeWhere;
 $sql = "SELECT V.fileName, V.startPage, V.endPage, V.formatID, V.partName, V.songName FROM view_efilePart AS V INNER JOIN part as P on P.partID = V.partID INNER JOIN section AS S on P.minSectionID = S.sectionID where 1 AND ( 0 " . $partWhere . ") AND ( 0 " . $where . " ) ORDER BY V.songName, S.printOrder ASC, P.partID ASC";
-
+//echo $sql;
 $pdf = new Fpdi\Fpdi();
 
 $pageCount = 1;
@@ -830,6 +834,7 @@ if (isset($input['arrangement'])){
 		}
 	  }
           // pad out with empty pages
+	  if ($padding){
 	  if (0 == $row[3]){
 		$jtarget = ceil($jj/4) * 4;
 		} else {
@@ -844,6 +849,7 @@ if (isset($input['arrangement'])){
        			$pdf->Write(5,"Blank on purpose \n");
 		}
 	  }
+	  } // end if $padding
 
         }
 $this->conn->saveRequest($input);
