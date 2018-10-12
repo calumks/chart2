@@ -2,13 +2,13 @@
 <phpunit backupGlobals="false"
         backupStaticAttributes="false"
         colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        processIsolation="false"
-        stopOnFailure="false"
+        convertErrorsToExceptions="false"
+        convertNoticesToExceptions="false"
+        convertWarningsToExceptions="false"
+        processIsolation="true"
+        stopOnFailure="true"
         syntaxCheck="true"
-	bootstrap="include_refsC.php"
+	bootstrap="phpunit-tests/bootstrap.php"
 >
         <testsuites>
                 <testsuite name="MyPlugin Test Suite">

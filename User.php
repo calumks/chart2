@@ -1,5 +1,7 @@
 <?php
 
+require_once "mysql-cred.php";
+
 class User
 {
 
@@ -213,11 +215,8 @@ function setTSBcookieArray( $value, $expiry ){
 
 function setValidCookie( $confirmation ){
 
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
+$link  = db_connect();
+
 $sql = "SELECT confirmationID FROM confirmation where confirmationCode = '" . $confirmation ."' LIMIT 1;";
 $result = mysqli_query($link, $sql);
 

@@ -2,8 +2,7 @@ version: "3"
 
 services:
   webserver:
-    build: 
-      context: ./docker/bin/webserver
+    build: ./docker/bin/webserver
     container_name: 'webserver'
     restart: 'always'
     ports:
@@ -41,3 +40,10 @@ services:
       - '8080:80'
     volumes: 
       - /sessions
+  tests:
+    image: phpunit/phpunit
+    container_name: 'tests'
+    links:
+      - mysql
+    volumes: 
+      - .:/app

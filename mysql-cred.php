@@ -1,5 +1,22 @@
 <?php
+
+function db_connect() {
+
     $servername = "localhost";
-    $username = "makeUpAUserName";    // change $username for  local installation
-    $password = "makeUpASatisfactoryPassword";    // change $password for  local installation
-	$database ="chart2";    // change $database for  local installation
+    // change $username for  local installation
+    $username = "makeUpAUserName";
+    // change $password for  local installation
+    $password = "makeUpASatisfactoryPassword";
+    $database ="chart2";  
+
+    $link  = @mysqli_connect($servername, $username, $password, $database);
+    if (!$link) {
+        if ($servername == "localhost") {
+            // docker credentials
+            return db_connect("mysql", $username, $password, $database);
+        } 
+        die("Connection failed: " . mysqli_connect_error());
+    } else {
+        return $link;
+    } 
+}

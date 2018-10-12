@@ -1,5 +1,7 @@
 <?php
 
+require_once "mysql-cred.php";
+
 use \setasign\Fpdi;
 
 class Arrangement{
@@ -114,11 +116,7 @@ return $pdf;
 function getArrangementForm( $arrangementID){
 
 $form = "";
-include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
+$link  = db_connect();
 
 $sql = "SELECT noteText from note  INNER JOIN publication as PUB on note.publicationID = PUB.publicationID INNER JOIN arrangement as A on A.arrangementID = PUB.arrangementID  WHERE A.arrangementID=" . $arrangementID . " ORDER BY note.noteID ASC ";
 $result = mysqli_query($link, $sql);
@@ -163,12 +161,8 @@ return $form;
 
 function getChartListForm(){
 
-include "mysql-cred.php";
+$link  = db_connect();
 
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
 $form = "<form action = '' method='GET'>";
 $form .= "<input type='hidden' name='action' value='getChartList' />";
 
@@ -512,7 +506,6 @@ $orderByList = " ORDER BY v.setListOrder ASC ";
     $partWhere .= " OR partName='Drums' ";
 
 $pdf = new myListAllPDF();
-include "mysql-cred.php";
 
 if ('' == $partID){
     $partID = 0;
@@ -530,11 +523,7 @@ if (-999==$partID){
     $wherePart = " partID = " . $partID;
     $bIsSection = false;
 }
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error);
-} 
-
+$link  = db_connect();
 
 if (!$bIsSection){
     $sqlParts = "SELECT P.partID, P.name from part as P INNER JOIN section AS S on P.minSectionID = S.sectionID WHERE " . $wherePart . "  order by S.printOrder ASC,  P.partID ASC";
