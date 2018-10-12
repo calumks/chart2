@@ -1,14 +1,13 @@
 <?php
 
-function db_connect() {
-
-    $servername = "localhost";
+function db_connect(
+    $servername = "localhost",
     // change $username for  local installation
-    $username = "makeUpAUserName";
+    $username = "makeUpAUserName",
     // change $password for  local installation
-    $password = "makeUpASatisfactoryPassword";
-    $database ="chart2";  
-
+    $password = "makeUpASatisfactoryPassword",
+    $database ="chart2"
+) {
     $link  = @mysqli_connect($servername, $username, $password, $database);
     if (!$link) {
         if ($servername == "localhost") {
