@@ -19,7 +19,6 @@ $ip = ($ip === false) ? '0.0.0.0' : $ip;
 return $ip;
 }
 
-
 function listSingle($sql){
 
 $pairedFiles = array();
@@ -33,11 +32,7 @@ function listMultiple($sql){
 
 include "mysql-cred.php";
 
-
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
+$link  = $this->db_connect( $servername, $username, $password, $database);
 $result = mysqli_query($link, $sql);
 $pairedFiles = array();
 if ($result){
@@ -49,14 +44,10 @@ mysqli_close( $link );
 return $pairedFiles;
 }
 
-
 function my_execute( $sql ){
 
 include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
+$link  = $this->db_connect( $servername, $username, $password, $database);
 //echo "sql: " . $sql;
 $statement = mysqli_prepare($link, $sql);
 $result = mysqli_execute($statement);
@@ -68,10 +59,7 @@ return $result;
 function my_insert_id( $sql ){
 
 include "mysql-cred.php";
-$link  = mysqli_connect( $servername, $username, $password, $database);
-if (mysqli_connect_errno()) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
+$link  = $this->db_connect( $servername, $username, $password, $database);
 $result = mysqli_execute(mysqli_prepare($link, $sql));
 $lastID = mysqli_insert_id( $link );
 mysqli_close($link);
@@ -88,6 +76,18 @@ function saveRequest($input){
 	$result = $this->my_execute( $sql);
 
 	return $result;
+}
+
+function db_connect($servername, $username, $password, $database) {
+	$link  = @mysqli_connect( $servername, $username, $password, $database);
+	if (!$link) {
+		if ($servername == "localhost") {
+			return $this->db_connect("mysql", $username, $password, $database);
+		} 
+		die("Connection failed: " . mysqli_connect_error());
+	} else {
+		return $link;
+	} 
 }
 
 } // end class Connection
